@@ -1,0 +1,24 @@
+{
+  "name": "My 30-Day Lifestyle Tracker & Journal",
+  "short_name": "30D Lifestyle",
+  "description": "Offline-first 30-day lifestyle journal, habit tracker, digital photo scrapbook, and fitness journey tracker.",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#F7F5F0",
+  "theme_color": "#3B5249",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "./icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "./icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

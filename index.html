@@ -1,0 +1,3874 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<title>30-Day Complete Lifestyle Journal &amp; Habit Tracker</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400..700;1,9..40,400..700&family=Fraunces:ital,opsz,wght@0,9..144,400..700;1,9..144,400..700&display=swap" rel="stylesheet">
+<link rel="manifest" href="./manifest.json">
+<meta name="theme-color" content="#3B5249">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<link rel="apple-touch-icon" href="./icons/icon-192.png">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<script src="./offline-engine.js"></script>
+<style>
+  :root {
+    --bg-cream: #F7F5F0;
+    --bg-card: #FFFFFF;
+    --bg-soft: #EFECE4;
+    --sage-dark: #3B5249;
+    --sage-main: #527366;
+    --sage-light: #DCE5E0;
+    --sage-tint: #EFF4F1;
+    --terracotta: #C87D55;
+    --terracotta-light: #F7EAE2;
+    --amber: #D99B26;
+    --amber-light: #FDF3DF;
+    --ink: #232A27;
+    --ink-muted: #64706B;
+    --border: #E2DDD2;
+    --radius-lg: 20px;
+    --radius-md: 14px;
+    --radius-sm: 10px;
+    --shadow: 0 4px 20px rgba(35, 42, 39, 0.05);
+  }
+
+  * {
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  body {
+    margin: 0;
+    padding: 0;
+    font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    background-color: var(--bg-cream);
+    color: var(--ink);
+    line-height: 1.5;
+    padding-bottom: 92px;
+  }
+
+  h1, h2, h3, .serif {
+    font-family: 'Fraunces', Georgia, serif;
+    font-weight: 600;
+    margin: 0;
+  }
+
+  .app-shell {
+    max-width: 820px;
+    margin: 0 auto;
+    padding: 16px 16px 32px;
+  }
+
+  /* Header */
+  .top-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 4px 16px;
+    gap: 12px;
+  }
+
+  .brand-title {
+    font-size: 1.45rem;
+    color: var(--sage-dark);
+    letter-spacing: -0.02em;
+  }
+
+  .brand-sub {
+    font-size: 0.82rem;
+    color: var(--ink-muted);
+    margin-top: 2px;
+  }
+
+  .day-selector-pill {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: 6px 12px;
+    box-shadow: var(--shadow);
+  }
+
+  .day-nav-btn {
+    background: var(--sage-tint);
+    border: none;
+    color: var(--sage-dark);
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .day-nav-btn:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+  }
+
+  .day-select {
+    border: none;
+    background: transparent;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 700;
+    font-size: 0.92rem;
+    color: var(--sage-dark);
+    cursor: pointer;
+    outline: none;
+  }
+
+  /* Cards & Layout */
+  .card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 18px;
+    margin-bottom: 16px;
+    box-shadow: var(--shadow);
+  }
+
+  .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    gap: 8px;
+  }
+
+  .card-title {
+    font-size: 1.12rem;
+    color: var(--sage-dark);
+  }
+
+  /* Hero Overview */
+  .hero-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .day-type-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 10px;
+  }
+
+  .day-type-btn {
+    border: 1px solid var(--border);
+    background: var(--bg-cream);
+    color: var(--ink-muted);
+    padding: 6px 12px;
+    border-radius: 999px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+
+  .day-type-btn.active {
+    background: var(--sage-dark);
+    color: #fff;
+    border-color: var(--sage-dark);
+  }
+
+  .day-type-btn.active.rest {
+    background: var(--amber);
+    border-color: var(--amber);
+    color: #fff;
+  }
+
+  .day-type-btn.active.illness {
+    background: var(--terracotta);
+    border-color: var(--terracotta);
+    color: #fff;
+  }
+
+  .overview-strips {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    margin-top: 14px;
+  }
+
+  @media (min-width: 600px) {
+    .overview-strips {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+
+  .mini-stat-box {
+    background: var(--bg-cream);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 10px 12px;
+  }
+
+  .mini-stat-label {
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    color: var(--ink-muted);
+  }
+
+  .mini-stat-val {
+    font-family: 'Fraunces', serif;
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--sage-dark);
+    margin-top: 2px;
+  }
+
+  .mini-stat-sub {
+    font-size: 0.74rem;
+    color: var(--ink-muted);
+    margin-top: 2px;
+  }
+
+  .dual-bars {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 10px;
+    margin-top: 14px;
+    padding-top: 12px;
+    border-top: 1px solid var(--bg-soft);
+  }
+
+  @media (min-width: 560px) {
+    .dual-bars {
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+  }
+
+  .info-banner {
+    background: var(--sage-tint);
+    border-left: 3px solid var(--sage-main);
+    padding: 10px 12px;
+    border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+    font-size: 0.83rem;
+    color: var(--sage-dark);
+    margin-top: 12px;
+  }
+
+  /* Category Sections */
+  .category-card {
+    padding: 16px;
+  }
+
+  .cat-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--bg-soft);
+    gap: 8px;
+  }
+
+  .cat-title {
+    font-size: 1.04rem;
+    color: var(--sage-dark);
+  }
+
+  .cat-badge {
+    font-size: 0.76rem;
+    font-weight: 700;
+    background: var(--sage-tint);
+    color: var(--sage-dark);
+    padding: 3px 10px;
+    border-radius: 999px;
+    white-space: nowrap;
+  }
+
+  .cat-badge.mandatory {
+    background: var(--terracotta-light);
+    color: var(--terracotta);
+  }
+
+  /* Habit Row */
+  .habit-item {
+    padding: 12px 0;
+    border-bottom: 1px solid var(--bg-soft);
+  }
+
+  .habit-item:last-child {
+    border-bottom: none;
+    padding-bottom: 2px;
+  }
+
+  .habit-item.reading-highlight {
+    background: var(--sage-tint);
+    margin: 0 -10px;
+    padding: 12px 10px;
+    border-radius: var(--radius-md);
+    border-bottom: none;
+    margin-bottom: 8px;
+  }
+
+  .habit-main {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .habit-info {
+    flex: 1;
+  }
+
+  .habit-name {
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: var(--ink);
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .tag-pill {
+    font-size: 0.68rem;
+    font-weight: 700;
+    padding: 2px 7px;
+    border-radius: 999px;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+  }
+
+  .tag-mandatory {
+    background: var(--terracotta-light);
+    color: var(--terracotta);
+  }
+
+  .tag-flexible {
+    background: var(--sage-tint);
+    color: var(--sage-dark);
+  }
+
+  .tag-optional {
+    background: var(--bg-soft);
+    color: var(--ink-muted);
+  }
+
+  .habit-desc {
+    font-size: 0.8rem;
+    color: var(--ink-muted);
+    margin-top: 2px;
+  }
+
+  .status-pill {
+    min-width: 112px;
+    padding: 8px 12px;
+    border-radius: 999px;
+    border: 1.5px solid var(--border);
+    background: var(--bg-cream);
+    color: var(--ink-muted);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 700;
+    font-size: 0.8rem;
+    cursor: pointer;
+    text-align: center;
+    transition: all 0.15s ease;
+    user-select: none;
+  }
+
+  .status-pill[data-status="done"] {
+    background: var(--sage-main);
+    border-color: var(--sage-main);
+    color: #fff;
+  }
+
+  .status-pill[data-status="missed"] {
+    background: var(--terracotta-light);
+    border-color: var(--terracotta);
+    color: var(--terracotta);
+  }
+
+  .status-pill[data-status="na"] {
+    background: var(--bg-soft);
+    border-color: var(--border);
+    color: var(--ink-muted);
+    font-style: italic;
+  }
+
+  /* Habit Extra Controls */
+  .habit-extra {
+    margin-top: 10px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    background: var(--bg-cream);
+    padding: 9px 10px;
+    border-radius: var(--radius-sm);
+  }
+
+  .reading-highlight .habit-extra {
+    background: #FFFFFF;
+  }
+
+  .mini-input {
+    border: 1px solid var(--border);
+    background: #fff;
+    border-radius: 8px;
+    padding: 6px 10px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.85rem;
+    color: var(--ink);
+    width: 90px;
+  }
+
+  .mini-input.wide {
+    width: 100%;
+    flex: 1;
+    min-width: 180px;
+  }
+
+  .quick-chip {
+    border: 1px solid var(--sage-light);
+    background: #fff;
+    color: var(--sage-dark);
+    border-radius: 8px;
+    padding: 5px 9px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  .quick-chip.active {
+    background: var(--sage-main);
+    color: #fff;
+    border-color: var(--sage-main);
+  }
+
+  .checkbox-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.82rem;
+    color: var(--ink);
+    cursor: pointer;
+    font-weight: 500;
+  }
+
+  /* Collapsible Detail Drawers */
+  details.journal-drawer {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    margin-bottom: 14px;
+    box-shadow: var(--shadow);
+    overflow: hidden;
+  }
+
+  details.journal-drawer > summary {
+    list-style: none;
+    padding: 15px 18px;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: 'Fraunces', Georgia, serif;
+    font-weight: 600;
+    font-size: 1.05rem;
+    color: var(--sage-dark);
+    user-select: none;
+  }
+
+  details.journal-drawer > summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .drawer-body {
+    padding: 4px 18px 18px;
+    border-top: 1px solid var(--bg-soft);
+  }
+
+  /* Journal & Ratings */
+  .rating-group {
+    margin-bottom: 14px;
+  }
+
+  .rating-label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin-bottom: 6px;
+    color: var(--ink);
+  }
+
+  .rating-pills {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 6px;
+  }
+
+  .rate-btn {
+    padding: 8px 4px;
+    border: 1px solid var(--border);
+    background: var(--bg-cream);
+    border-radius: 10px;
+    font-weight: 700;
+    font-size: 0.88rem;
+    color: var(--ink-muted);
+    cursor: pointer;
+  }
+
+  .rate-btn.active {
+    background: var(--sage-dark);
+    color: #fff;
+    border-color: var(--sage-dark);
+  }
+
+  .field-group {
+    margin-bottom: 12px;
+  }
+
+  .field-label {
+    display: block;
+    font-size: 0.83rem;
+    font-weight: 600;
+    color: var(--sage-dark);
+    margin-bottom: 5px;
+  }
+
+  .text-area, .text-input {
+    width: 100%;
+    border: 1px solid var(--border);
+    background: var(--bg-cream);
+    border-radius: var(--radius-sm);
+    padding: 10px 12px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.9rem;
+    color: var(--ink);
+    resize: vertical;
+  }
+
+  .text-area:focus, .text-input:focus, .mini-input:focus {
+    outline: none;
+    border-color: var(--sage-main);
+    background: #fff;
+  }
+
+  /* Multi-Photo Scrapbook Cards */
+  .photo-box {
+    border: 1.5px dashed var(--sage-main);
+    background: var(--sage-tint);
+    border-radius: var(--radius-md);
+    padding: 14px;
+    text-align: center;
+    cursor: pointer;
+  }
+
+  .day-photos-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 12px;
+    margin-top: 12px;
+  }
+
+  @media (min-width: 540px) {
+    .day-photos-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  .photo-entry-card {
+    background: var(--bg-cream);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 10px;
+  }
+
+  .photo-entry-card img {
+    width: 100%;
+    height: 190px;
+    object-fit: cover;
+    border-radius: var(--radius-sm);
+    display: block;
+    margin-bottom: 8px;
+  }
+
+  /* Scrapbook Gallery View */
+  .scrapbook-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
+
+  @media (min-width: 600px) {
+    .scrapbook-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  .polaroid-card {
+    background: #FFFFFF;
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 14px 14px 18px;
+    box-shadow: 0 6px 22px rgba(35, 42, 39, 0.06);
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  .polaroid-img {
+    width: 100%;
+    height: 230px;
+    object-fit: cover;
+    border-radius: 8px;
+    display: block;
+    margin-bottom: 10px;
+  }
+
+  .polaroid-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.76rem;
+    font-weight: 700;
+    color: var(--sage-main);
+    margin-bottom: 4px;
+  }
+
+  .polaroid-caption {
+    font-family: 'Fraunces', Georgia, serif;
+    font-size: 0.98rem;
+    color: var(--ink);
+    margin-bottom: 6px;
+  }
+
+  .polaroid-memory {
+    font-size: 0.82rem;
+    color: var(--ink-muted);
+    background: var(--bg-cream);
+    padding: 8px 10px;
+    border-radius: 8px;
+  }
+
+  .handwritten-lines {
+    display: none;
+    margin-top: 12px;
+    border-top: 1px dashed #CCC;
+    padding-top: 8px;
+  }
+
+  .handwritten-lines div {
+    height: 22px;
+    border-bottom: 1px solid #DDD;
+  }
+
+  /* Calendar Grid */
+  .calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 8px;
+  }
+
+  @media (min-width: 540px) {
+    .calendar-grid {
+      grid-template-columns: repeat(6, 1fr);
+    }
+  }
+
+  .cal-cell {
+    background: var(--bg-cream);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 10px 6px;
+    text-align: center;
+    cursor: pointer;
+    transition: transform 0.12s ease;
+  }
+
+  .cal-cell:active {
+    transform: scale(0.97);
+  }
+
+  .cal-cell.selected {
+    border-color: var(--sage-dark);
+    box-shadow: 0 0 0 2px var(--sage-light);
+  }
+
+  .cal-cell.lvl-high {
+    background: #DCE9E2;
+    border-color: #8BB39F;
+  }
+
+  .cal-cell.lvl-mid {
+    background: #F4EFE2;
+    border-color: #D7C69E;
+  }
+
+  .cal-cell.lvl-rest {
+    background: #FDF3DF;
+    border-color: #E8C782;
+  }
+
+  .cal-day-num {
+    font-weight: 700;
+    font-size: 0.9rem;
+    color: var(--ink);
+  }
+
+  .cal-pct {
+    font-size: 0.73rem;
+    font-weight: 700;
+    color: var(--sage-dark);
+    margin-top: 2px;
+  }
+
+  .cal-icons {
+    font-size: 0.72rem;
+    margin-top: 3px;
+    min-height: 15px;
+  }
+
+  /* Dashboard Stats */
+  .kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+
+  @media (min-width: 580px) {
+    .kpi-grid {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+
+  .kpi-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 14px;
+    box-shadow: var(--shadow);
+  }
+
+  .kpi-label {
+    font-size: 0.73rem;
+    color: var(--ink-muted);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+  }
+
+  .kpi-val {
+    font-family: 'Fraunces', serif;
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--sage-dark);
+    margin-top: 4px;
+  }
+
+  .kpi-sub {
+    font-size: 0.75rem;
+    color: var(--ink-muted);
+    margin-top: 2px;
+  }
+
+  .chart-wrap {
+    position: relative;
+    height: 220px;
+    width: 100%;
+    margin-top: 8px;
+  }
+
+  .bar-row {
+    margin-bottom: 10px;
+  }
+
+  .bar-meta {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.82rem;
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+
+  .bar-track {
+    width: 100%;
+    height: 8px;
+    background: var(--bg-soft);
+    border-radius: 999px;
+    overflow: hidden;
+  }
+
+  .bar-fill {
+    height: 100%;
+    background: var(--sage-main);
+    border-radius: 999px;
+    transition: width 0.3s ease;
+  }
+
+  .bar-fill.terracotta {
+    background: var(--terracotta);
+  }
+
+  /* Report Styles */
+  .report-section {
+    margin-bottom: 20px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--bg-soft);
+  }
+
+  .report-section:last-child {
+    border-bottom: none;
+  }
+
+  .report-heading {
+    font-family: 'Fraunces', Georgia, serif;
+    font-size: 1.02rem;
+    font-weight: 600;
+    color: var(--sage-dark);
+    margin-bottom: 8px;
+  }
+
+  .comp-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.84rem;
+  }
+
+  .comp-table th, .comp-table td {
+    text-align: left;
+    padding: 8px 6px;
+    border-bottom: 1px solid var(--bg-soft);
+  }
+
+  .comp-table th {
+    color: var(--ink-muted);
+    font-weight: 600;
+  }
+
+  .quote-card {
+    background: var(--bg-cream);
+    border-left: 3px solid var(--sage-main);
+    padding: 10px 12px;
+    border-radius: 0 10px 10px 0;
+    margin-bottom: 8px;
+    font-size: 0.85rem;
+  }
+
+  /* Buttons */
+  .btn {
+    border: none;
+    border-radius: var(--radius-sm);
+    padding: 10px 15px;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 700;
+    font-size: 0.86rem;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+  }
+
+  .btn-primary {
+    background: var(--sage-dark);
+    color: #fff;
+  }
+
+  .btn-secondary {
+    background: var(--sage-tint);
+    color: var(--sage-dark);
+    border: 1px solid var(--sage-light);
+  }
+
+  .btn-danger {
+    background: var(--terracotta-light);
+    color: var(--terracotta);
+  }
+
+  .btn-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  /* Bottom Navigation */
+  .bottom-nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(255, 255, 255, 0.96);
+    backdrop-filter: blur(10px);
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: space-around;
+    padding: 8px 2px calc(8px + env(safe-area-inset-bottom));
+    z-index: 100;
+  }
+
+  .nav-tab {
+    background: none;
+    border: none;
+    color: var(--ink-muted);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.7rem;
+    font-weight: 600;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    cursor: pointer;
+    padding: 4px 6px;
+    border-radius: 10px;
+  }
+
+  .nav-tab.active {
+    color: var(--sage-dark);
+    background: var(--sage-tint);
+  }
+
+  .nav-icon {
+    font-size: 1.12rem;
+  }
+
+  .view-panel {
+    display: none;
+  }
+
+  .view-panel.active {
+    display: block;
+  }
+
+  .toast {
+    position: fixed;
+    top: 16px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--sage-dark);
+    color: #fff;
+    padding: 9px 18px;
+    border-radius: 999px;
+    font-size: 0.84rem;
+    font-weight: 600;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.18);
+    z-index: 999;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s ease;
+  }
+
+  .toast.show {
+    opacity: 1;
+  }
+
+  @media print {
+    .bottom-nav, .top-header, .no-print {
+      display: none !important;
+    }
+    body {
+      background: #fff;
+      padding: 0;
+    }
+    .view-panel {
+      display: none !important;
+    }
+    body:not(.print-scrapbook-mode) #view-report {
+      display: block !important;
+    }
+    body.print-scrapbook-mode #view-scrapbook {
+      display: block !important;
+    }
+    body.print-scrapbook-mode .handwritten-lines {
+      display: block !important;
+    }
+    .card, .polaroid-card {
+      box-shadow: none;
+      border: 1px solid #CCC;
+    }
+  }
+
+  /* Live Save-Status Badge & PWA Install */
+  .status-bar-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 4px;
+    flex-wrap: wrap;
+  }
+
+  .save-status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 0.73rem;
+    font-weight: 700;
+    padding: 3px 9px;
+    border-radius: 999px;
+    background: var(--sage-tint);
+    color: var(--sage-dark);
+    border: 1px solid var(--sage-light);
+    transition: all 0.2s ease;
+  }
+
+  .save-status-badge.saving {
+    background: var(--amber-light);
+    color: #9A6700;
+    border-color: #E8C782;
+  }
+
+  .save-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--sage-main);
+  }
+
+  .save-status-badge.saving .save-dot {
+    background: var(--amber);
+  }
+
+  .install-pwa-btn {
+    display: none;
+    background: var(--sage-dark);
+    color: #fff;
+    border: none;
+    border-radius: 999px;
+    padding: 3px 10px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    cursor: pointer;
+  }
+
+  /* My Fitness Journey Section */
+  .fitness-compare-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 12px;
+    margin-top: 12px;
+  }
+
+  @media (min-width: 560px) {
+    .fitness-compare-grid {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  .fitness-compare-slot {
+    background: var(--bg-cream);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 12px;
+  }
+
+  .fitness-compare-slot img {
+    width: 100%;
+    height: 240px;
+    object-fit: cover;
+    border-radius: var(--radius-sm);
+    margin-top: 8px;
+    display: block;
+  }
+
+  .fitness-timeline-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  @media (min-width: 560px) {
+    .fitness-timeline-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  .fitness-milestone-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 12px;
+    box-shadow: var(--shadow);
+  }
+
+  .fitness-milestone-card img {
+    width: 100%;
+    height: 220px;
+    object-fit: cover;
+    border-radius: var(--radius-sm);
+    margin-bottom: 8px;
+    display: block;
+  }
+
+  .milestone-pill {
+    display: inline-block;
+    font-size: 0.72rem;
+    font-weight: 700;
+    background: var(--terracotta-light);
+    color: var(--terracotta);
+    padding: 2px 8px;
+    border-radius: 999px;
+  }
+
+</style>
+</head>
+<body>
+
+<div id="toast" class="toast">Saved</div>
+
+<div class="app-shell">
+  <!-- Header -->
+  <header class="top-header">
+    <div>
+      <h1 class="brand-title">30-Day Lifestyle Journal</h1>
+      <div class="status-bar-row">
+        <span class="save-status-badge" id="saveStatusBadge"><span class="save-dot"></span><span id="saveStatusText">Saved locally ✓</span></span>
+        <span class="save-status-badge" id="offlineStatusBadge" style="display:none; background:var(--amber-light); color:#9A6700; border-color:#E8C782;">Offline Ready</span>
+        <button type="button" class="install-pwa-btn" id="installPwaBtn">+ Install App</button>
+      </div>
+    </div>
+    <div class="day-selector-pill">
+      <button class="day-nav-btn" id="prevDayBtn" aria-label="Previous Day">‹</button>
+      <select id="daySelect" class="day-select" aria-label="Select Day"></select>
+      <button class="day-nav-btn" id="nextDayBtn" aria-label="Next Day">›</button>
+    </div>
+  </header>
+
+  <!-- VIEW 1: TODAY CHECK-IN -->
+  <main id="view-today" class="view-panel active">
+    <div class="card">
+      <div class="hero-top">
+        <div>
+          <div style="font-size:0.8rem; font-weight:700; color:var(--sage-main); text-transform:uppercase; letter-spacing:0.04em;" id="dayDateLabel">Day 1 of 30</div>
+          <h2 class="card-title" style="font-size:1.32rem; margin-top:2px;" id="dayHeroStatus">A calm, intentional day</h2>
+          <div class="day-type-group">
+            <button class="day-type-btn active" data-daytype="regular">Normal Day</button>
+            <button class="day-type-btn rest" data-daytype="rest">Rest Day</button>
+            <button class="day-type-btn illness" data-daytype="illness">Illness / Recovery</button>
+          </div>
+        </div>
+        <div style="text-align:right;">
+          <span class="cat-badge" id="heroStreakBadge">Reading Streak: 0d</span>
+        </div>
+      </div>
+
+      <!-- Key Status Indicators -->
+      <div class="overview-strips">
+        <div class="mini-stat-box">
+          <div class="mini-stat-label">Mandatory Reading</div>
+          <div class="mini-stat-val" id="ovReadingVal">Open</div>
+          <div class="mini-stat-sub" id="ovReadingSub">Target: 15 min</div>
+        </div>
+        <div class="mini-stat-box">
+          <div class="mini-stat-label">Daily Pooja</div>
+          <div class="mini-stat-val" id="ovPoojaVal">Open</div>
+          <div class="mini-stat-sub" id="ovPhotoSub">Photo: Pending</div>
+        </div>
+        <div class="mini-stat-box">
+          <div class="mini-stat-label">DSA Practice</div>
+          <div class="mini-stat-val" id="ovDsaVal">0.0h</div>
+          <div class="mini-stat-sub" id="ovDsaSub">Target: 1.0h</div>
+        </div>
+        <div class="mini-stat-box">
+          <div class="mini-stat-label">Well-being</div>
+          <div class="mini-stat-val" id="ovMoodVal">—</div>
+          <div class="mini-stat-sub" id="ovMoodSub">Mood / Energy / Stress</div>
+        </div>
+      </div>
+
+      <!-- Dual Consistency Progress Bars -->
+      <div class="dual-bars">
+        <div>
+          <div class="bar-meta">
+            <span>Mandatory Daily Habits</span>
+            <span id="mandatoryPctText">0%</span>
+          </div>
+          <div class="bar-track"><div class="bar-fill terracotta" id="mandatoryBarFill" style="width:0%"></div></div>
+        </div>
+        <div>
+          <div class="bar-meta">
+            <span>Flexible Habits Completed</span>
+            <span id="flexiblePctText">0%</span>
+          </div>
+          <div class="bar-track"><div class="bar-fill" id="flexibleBarFill" style="width:0%"></div></div>
+        </div>
+      </div>
+
+      <div class="info-banner" id="dayTypeNotice"></div>
+      <div id="illnessNoteWrap" style="display:none; margin-top:10px;">
+        <input type="text" id="illnessNoteInput" class="text-input" placeholder="Optional recovery note or symptoms (e.g., resting throat, low fever)..." />
+      </div>
+    </div>
+
+    <!-- Habit Categories Container (A, B, C) -->
+    <div id="habitsContainer"></div>
+
+    <!-- Category D: Family & Relationships -->
+    <details class="journal-drawer" open>
+      <summary>
+        <span>D. Family &amp; Relationships <span class="tag-pill tag-optional" style="margin-left:6px;">Optional Experience</span></span>
+        <span class="cat-badge" id="familyDrawerBadge">Open</span>
+      </summary>
+      <div class="drawer-body">
+        <p style="font-size:0.82rem; color:var(--ink-muted); margin:8px 0 12px;">
+          Document meaningful time with family without turning relationships into a mandatory score.
+        </p>
+        <div class="field-group">
+          <label class="checkbox-label">
+            <input type="checkbox" id="famSpentTime">
+            Spent meaningful quality time with family today
+          </label>
+        </div>
+        <div class="field-group">
+          <label class="field-label" for="famActivity">What did we do together?</label>
+          <input type="text" id="famActivity" class="text-input" placeholder="Dinner conversation, evening walk, phone call..." />
+        </div>
+        <div class="field-group" style="margin-bottom:0;">
+          <label class="field-label" for="famMemory">A short memory or note to keep</label>
+          <input type="text" id="famMemory" class="text-input" placeholder="Something warm or funny worth remembering..." />
+        </div>
+      </div>
+    </details>
+
+    <!-- Category E: Life Experiences, Memories & Digital Scrapbook -->
+    <details class="journal-drawer" open>
+      <summary>
+        <span>E. Life Experiences, Memories &amp; Journal <span class="tag-pill tag-mandatory" style="margin-left:6px;">Photo &amp; Memory</span></span>
+        <span class="cat-badge" id="memoryDrawerBadge">0 Photos</span>
+      </summary>
+      <div class="drawer-body">
+        <div class="field-group" style="margin-top:8px;">
+          <label class="field-label">Today's Photographs &amp; Scrapbook Captions (Multiple allowed)</label>
+          <div class="photo-box" id="photoDropZone">
+            <div style="font-size:0.86rem; font-weight:600; color:var(--sage-dark);">Tap to add one or more photographs from today</div>
+            <div style="font-size:0.75rem; color:var(--ink-muted); margin-top:2px;">Stored safely in IndexedDB so browser storage never fills up</div>
+            <input type="file" id="photoInput" accept="image/*" multiple style="display:none;" />
+          </div>
+          <div class="day-photos-grid" id="dayPhotosGrid"></div>
+        </div>
+
+        <div class="field-group">
+          <label class="field-label" for="jBestMoment">Memorable moment from today</label>
+          <input type="text" id="jBestMoment" class="text-input" placeholder="A peaceful moment, small win, or unexpected joy..." />
+        </div>
+
+        <div class="field-group">
+          <label class="field-label" for="jNotes">Daily journal entry &amp; reflection</label>
+          <textarea id="jNotes" rows="3" class="text-area" placeholder="How did today feel? What stood out?"></textarea>
+        </div>
+
+        <div class="rating-group">
+          <div class="rating-label"><span>Mood Rating</span><span id="moodValLabel">Not rated</span></div>
+          <div class="rating-pills" data-rating="mood">
+            <button type="button" class="rate-btn" data-val="1">1</button>
+            <button type="button" class="rate-btn" data-val="2">2</button>
+            <button type="button" class="rate-btn" data-val="3">3</button>
+            <button type="button" class="rate-btn" data-val="4">4</button>
+            <button type="button" class="rate-btn" data-val="5">5</button>
+          </div>
+        </div>
+
+        <div class="rating-group">
+          <div class="rating-label"><span>Energy Level</span><span id="energyValLabel">Not rated</span></div>
+          <div class="rating-pills" data-rating="energy">
+            <button type="button" class="rate-btn" data-val="1">1</button>
+            <button type="button" class="rate-btn" data-val="2">2</button>
+            <button type="button" class="rate-btn" data-val="3">3</button>
+            <button type="button" class="rate-btn" data-val="4">4</button>
+            <button type="button" class="rate-btn" data-val="5">5</button>
+          </div>
+        </div>
+
+        <div class="rating-group" style="margin-bottom:0;">
+          <div class="rating-label"><span>Stress Level (1 = Calm, 5 = High)</span><span id="stressValLabel">Not rated</span></div>
+          <div class="rating-pills" data-rating="stress">
+            <button type="button" class="rate-btn" data-val="1">1</button>
+            <button type="button" class="rate-btn" data-val="2">2</button>
+            <button type="button" class="rate-btn" data-val="3">3</button>
+            <button type="button" class="rate-btn" data-val="4">4</button>
+            <button type="button" class="rate-btn" data-val="5">5</button>
+          </div>
+        </div>
+      </div>
+    </details>
+
+    <!-- Independent Research Drawer -->
+    <details class="journal-drawer" id="researchDrawer">
+      <summary>
+        <span>Independent Research Log <span class="tag-pill tag-optional" style="margin-left:6px;">Optional Deep Dive</span></span>
+        <span class="cat-badge" id="researchDrawerBadge">Open</span>
+      </summary>
+      <div class="drawer-body">
+        <p style="font-size:0.82rem; color:var(--ink-muted); margin:8px 0 12px;">
+          Separate from your mandatory daily reading. Record curiosity-driven exploration anytime you research a topic.
+        </p>
+        <div style="display:grid; grid-template-columns:1fr 120px; gap:8px;">
+          <div class="field-group">
+            <label class="field-label" for="resTopic">Topic researched</label>
+            <input type="text" id="resTopic" class="text-input" placeholder="e.g., Distributed consensus, nutrition science..." />
+          </div>
+          <div class="field-group">
+            <label class="field-label" for="resMins">Time (mins)</label>
+            <input type="number" id="resMins" class="text-input" placeholder="30" />
+          </div>
+        </div>
+        <div class="field-group">
+          <label class="field-label">Three important things I learned</label>
+          <input type="text" id="resLearn1" class="text-input" style="margin-bottom:6px;" placeholder="1. Key insight one..." />
+          <input type="text" id="resLearn2" class="text-input" style="margin-bottom:6px;" placeholder="2. Key insight two..." />
+          <input type="text" id="resLearn3" class="text-input" placeholder="3. Key insight three..." />
+        </div>
+        <div class="field-group" style="margin-bottom:0;">
+          <label class="field-label" for="resSources">Sources or links consulted</label>
+          <input type="text" id="resSources" class="text-input" placeholder="Articles, papers, videos, or documentation..." />
+        </div>
+      </div>
+    </details>
+
+    <!-- Category F: Fun & Entertainment -->
+    <details class="journal-drawer" id="funDrawer">
+      <summary>
+        <span>F. Fun, Marvel &amp; Creative Hobbies <span class="tag-pill tag-optional" style="margin-left:6px;">Guilt-Free Joy</span></span>
+        <span class="cat-badge" id="funDrawerBadge">Optional</span>
+      </summary>
+      <div class="drawer-body">
+        <p style="font-size:0.82rem; color:var(--ink-muted); margin:8px 0 12px;">
+          Enjoyment is never an obligation. Log movies, Marvel theories, or creative hobbies purely for your own archive.
+        </p>
+        <div class="field-group">
+          <label class="field-label" for="funMarvel">Marvel movies, series, theories &amp; discussions</label>
+          <input type="text" id="funMarvel" class="text-input" placeholder="Episode watched, lore theory, or timeline discussion..." />
+        </div>
+        <div class="field-group">
+          <label class="field-label" for="funOther">Other movies, shows, or entertainment</label>
+          <input type="text" id="funOther" class="text-input" placeholder="Film, music, podcast, or game..." />
+        </div>
+        <div class="field-group" style="margin-bottom:0;">
+          <label class="field-label" for="funHobbies">Hobbies &amp; creative activities</label>
+          <input type="text" id="funHobbies" class="text-input" placeholder="Photography editing, sketching, cooking, music..." />
+        </div>
+      </div>
+    </details>
+  </main>
+
+  <!-- VIEW 2: 30-DAY CALENDAR -->
+  <section id="view-calendar" class="view-panel">
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <h2 class="card-title">30-Day Journey Map</h2>
+          <div class="brand-sub">Tap any day to view or edit without overwriting history</div>
+        </div>
+        <span class="cat-badge" id="calActiveSummary">0 / 30 Logged</span>
+      </div>
+      <div class="calendar-grid" id="calendarGrid"></div>
+      <div style="display:flex; flex-wrap:wrap; gap:12px; margin-top:14px; font-size:0.78rem; color:var(--ink-muted);">
+        <span>🟢 All Mandatory Done</span>
+        <span>🟡 Partial Day</span>
+        <span>🟠 Rest / Recovery</span>
+        <span>📖 Reading Done</span>
+        <span>📷 Photo</span>
+        <span>🛕 Temple</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- VIEW 3: DIGITAL SCRAPBOOK & MEMORY GALLERY -->
+  <section id="view-scrapbook" class="view-panel">
+    <div class="card no-print">
+      <div class="card-header">
+        <div>
+          <h2 class="card-title">30-Day Photo Scrapbook</h2>
+          <div class="brand-sub">Chronological gallery &amp; printable physical scrapbook sheets</div>
+        </div>
+        <div class="btn-row">
+          <button class="btn btn-secondary" id="exportScrapbookHtmlBtn">Export Printable HTML</button>
+          <button class="btn btn-primary" id="printScrapbookBtn">Print Scrapbook Sheet</button>
+        </div>
+      </div>
+      <div style="display:flex; flex-wrap:wrap; justify-content:space-between; align-items:center; gap:8px;">
+        <label class="checkbox-label">
+          <input type="checkbox" id="scrapbookSelectedOnly">
+          Show only selected photos for printing (<span id="selectedPhotoCount">0</span> selected)
+        </label>
+        <span class="cat-badge" id="totalScrapbookCount">0 Memories</span>
+      </div>
+    </div>
+
+    <div id="scrapbookGallery" class="scrapbook-grid"></div>
+  </section>
+
+
+  <!-- VIEW 3B: MY FITNESS JOURNEY -->
+  <section id="view-fitness" class="view-panel">
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <h2 class="card-title">My Fitness Journey</h2>
+          <div class="brand-sub">Private body-transformation progress photos, body stats &amp; side-by-side comparison</div>
+        </div>
+        <span class="cat-badge" id="fitnessPhotoTotalBadge">0 Check-ins</span>
+      </div>
+
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:10px;">
+        <div>
+          <label class="field-label" for="fitMilestoneSelect">Milestone Tag</label>
+          <select id="fitMilestoneSelect" class="text-input" style="padding:8px 10px;">
+            <option value="Day 1 Baseline">Day 1 Baseline</option>
+            <option value="Week 1 Check-in">Week 1 Check-in</option>
+            <option value="Week 2 Check-in">Week 2 Check-in</option>
+            <option value="Week 3 Check-in">Week 3 Check-in</option>
+            <option value="Day 30 Finale">Day 30 Finale</option>
+            <option value="Post-Workout Pump">Post-Workout Check-in</option>
+          </select>
+        </div>
+        <div>
+          <label class="field-label" for="fitWeightInput">Weight / Body Metric (Optional)</label>
+          <input type="text" id="fitWeightInput" class="text-input" placeholder="e.g., 72.5 kg or Waist 32 in" style="padding:8px 10px;" />
+        </div>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label" for="fitNoteInput">Progress Note (Strength, energy, or posture observation)</label>
+        <input type="text" id="fitNoteInput" class="text-input" placeholder="e.g., Feeling stronger on push-ups, better posture..." />
+      </div>
+
+      <div class="photo-box" id="fitnessPhotoDropZone">
+        <div style="font-size:0.86rem; font-weight:600; color:var(--sage-dark);">Tap to log a Fitness Journey progress photo for <span id="fitCurrentDayLabel">Day 1</span></div>
+        <div style="font-size:0.75rem; color:var(--ink-muted); margin-top:2px;">Stored privately on your device in IndexedDB — never uploaded anywhere</div>
+        <input type="file" id="fitnessPhotoInput" accept="image/*" style="display:none;" />
+      </div>
+    </div>
+
+    <!-- Side-by-Side Comparison -->
+    <div class="card" id="fitnessCompareCard" style="display:none;">
+      <div class="card-header">
+        <h3 class="card-title">Side-by-Side Progress Comparison</h3>
+        <span class="cat-badge">Compare Any Two Check-ins</span>
+      </div>
+      <div class="fitness-compare-grid">
+        <div class="fitness-compare-slot">
+          <label class="field-label" for="fitCompareLeftSel">Before / Earlier Check-in</label>
+          <select id="fitCompareLeftSel" class="text-input" style="padding:6px 8px;"></select>
+          <div id="fitCompareLeftDisplay"></div>
+        </div>
+        <div class="fitness-compare-slot">
+          <label class="field-label" for="fitCompareRightSel">After / Later Check-in</label>
+          <select id="fitCompareRightSel" class="text-input" style="padding:6px 8px;"></select>
+          <div id="fitCompareRightDisplay"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Chronological Fitness Progress Timeline -->
+    <div id="fitnessTimelineGrid" class="fitness-timeline-grid"></div>
+  </section>
+
+  <!-- VIEW 4: ANALYTICS DASHBOARD -->
+  <section id="view-dashboard" class="view-panel">
+    <!-- Mandatory & Reading Highlight KPIs -->
+    <div class="kpi-grid">
+      <div class="kpi-card">
+        <div class="kpi-label">Mandatory Habits</div>
+        <div class="kpi-val" id="kpiMandatoryPct">0%</div>
+        <div class="kpi-sub">Reading, Pooja &amp; Memory</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Reading Streak</div>
+        <div class="kpi-val" id="kpiReadStreak">0 days</div>
+        <div class="kpi-sub" id="kpiReadLongest">Longest: 0d</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Reading Volume</div>
+        <div class="kpi-val" id="kpiReadTotal">0 min</div>
+        <div class="kpi-sub" id="kpiReadDays">0 / 30 days read</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Flexible Habits</div>
+        <div class="kpi-val" id="kpiFlexiblePct">0%</div>
+        <div class="kpi-sub">Completed when tracked</div>
+      </div>
+    </div>
+
+    <!-- Fitness & Career KPIs -->
+    <div class="kpi-grid">
+      <div class="kpi-card">
+        <div class="kpi-label">Strength Workouts</div>
+        <div class="kpi-val" id="kpiStrengthCount">0</div>
+        <div class="kpi-sub" id="kpiWorkoutHours">0.0 total hours</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Avg Daily Steps</div>
+        <div class="kpi-val" id="kpiAvgSteps">0</div>
+        <div class="kpi-sub" id="kpiTenKDays">0 days ≥ 10k</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Total DSA Hours</div>
+        <div class="kpi-val" id="kpiDsaHours">0.0h</div>
+        <div class="kpi-sub" id="kpiDsaDays">0 practice days</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Pooja &amp; Temple</div>
+        <div class="kpi-val" id="kpiPoojaPct">0%</div>
+        <div class="kpi-sub" id="kpiTempleCount">0 temple visits</div>
+      </div>
+    </div>
+
+    <!-- Lifestyle & Nutrition KPIs -->
+    <div class="kpi-grid">
+      <div class="kpi-card">
+        <div class="kpi-label">Avg Water / Protein</div>
+        <div class="kpi-val" id="kpiWaterProtein">0L / 0g</div>
+        <div class="kpi-sub" id="kpiHealthyEat">Healthy eating: 0%</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Sunrise / Sunset</div>
+        <div class="kpi-val" id="kpiSunExperiences">0</div>
+        <div class="kpi-sub">Sky moments witnessed</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Family &amp; Memories</div>
+        <div class="kpi-val" id="kpiFamilyCount">0</div>
+        <div class="kpi-sub" id="kpiPhotoMemories">0 photos captured</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Research &amp; Hobbies</div>
+        <div class="kpi-val" id="kpiResearchCount">0</div>
+        <div class="kpi-sub" id="kpiHobbyCount">0 leisure logs</div>
+      </div>
+    </div>
+
+    <!-- Weekly Goals Tracker -->
+    <div class="card">
+      <div class="card-header">
+        <h3 class="card-title">Weekly Optional Goals Progress</h3>
+        <span class="cat-badge">Gentle Rhythm</span>
+      </div>
+      <div id="weeklyGoalsProgress"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <h3 class="card-title">Mandatory vs. Flexible Weekly Trend</h3>
+        <span class="cat-badge">Weeks 1–5</span>
+      </div>
+      <div class="chart-wrap"><canvas id="weeklyChart"></canvas></div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <h3 class="card-title">Daily Reading Minutes &amp; DSA Hours</h3>
+        <span class="cat-badge">Intellectual Growth</span>
+      </div>
+      <div class="chart-wrap"><canvas id="learningChart"></canvas></div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <h3 class="card-title">Steps, Water &amp; Protein Trends</h3>
+        <span class="cat-badge">Physical Health</span>
+      </div>
+      <div class="chart-wrap"><canvas id="fitnessChart"></canvas></div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <h3 class="card-title">Mood, Energy &amp; Stress Over 30 Days</h3>
+        <span class="cat-badge">Emotional Balance</span>
+      </div>
+      <div class="chart-wrap"><canvas id="moodChart"></canvas></div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <h3 class="card-title">Individual Habit Consistency</h3>
+        <span class="cat-badge">Excludes Optional Experiences</span>
+      </div>
+      <div id="habitConsistencyBars"></div>
+    </div>
+  </section>
+
+  <!-- VIEW 5: DAY 30 FINAL REPORT -->
+  <section id="view-report" class="view-panel">
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <h2 class="card-title">30-Day Lifestyle Reflection Report</h2>
+          <div class="brand-sub">A story of consistency, learning, and lived memories</div>
+        </div>
+        <div class="btn-row no-print">
+          <button class="btn btn-secondary" id="exportExcelBtn">Export Excel</button>
+          <button class="btn btn-primary" id="printReportBtn">Print / PDF</button>
+        </div>
+      </div>
+
+      <div id="reportBody"></div>
+    </div>
+  </section>
+
+  <!-- VIEW 6: SETTINGS & SAFE BACKUP -->
+  <section id="view-settings" class="view-panel">
+    <div class="card">
+      <div class="card-header">
+        <h2 class="card-title">Personal Targets &amp; Preferences</h2>
+        <span class="cat-badge">Customizable</span>
+      </div>
+      <div class="field-group">
+        <label class="field-label" for="setStartDate">30-Day Challenge Start Date</label>
+        <input type="date" id="setStartDate" class="text-input" />
+      </div>
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+        <div class="field-group">
+          <label class="field-label" for="setReadingTarget">Daily Reading Target (mins)</label>
+          <input type="number" id="setReadingTarget" class="text-input" value="15" />
+        </div>
+        <div class="field-group">
+          <label class="field-label" for="setDsaTarget">Daily DSA Target (hours)</label>
+          <input type="number" step="0.25" id="setDsaTarget" class="text-input" value="1.0" />
+        </div>
+        <div class="field-group">
+          <label class="field-label" for="setWaterTarget">Daily Water Target (Litres)</label>
+          <input type="number" step="0.1" id="setWaterTarget" class="text-input" value="2.2" />
+        </div>
+        <div class="field-group">
+          <label class="field-label" for="setProteinTarget">Daily Protein Target (g)</label>
+          <input type="number" step="5" id="setProteinTarget" class="text-input" value="85" />
+        </div>
+        <div class="field-group">
+          <label class="field-label" for="setStepTarget">Daily Step Target</label>
+          <input type="number" step="500" id="setStepTarget" class="text-input" value="10000" />
+        </div>
+        <div class="field-group">
+          <label class="field-label" for="setWorkoutPref">Workout Preference</label>
+          <input type="text" id="setWorkoutPref" class="text-input" value="Home strength training (45–60m)" />
+        </div>
+      </div>
+
+      <div class="field-group" style="margin-top:8px;">
+        <label class="field-label">Mandatory Daily Habits Configuration</label>
+        <div style="background:var(--bg-cream); padding:10px 12px; border-radius:var(--radius-sm); font-size:0.84rem;">
+          <div style="margin-bottom:6px;">
+            <input type="checkbox" checked disabled> <strong>Daily Reading</strong> (Locked as core non-negotiable habit)
+          </div>
+          <div style="margin-bottom:6px;">
+            <label class="checkbox-label"><input type="checkbox" id="mandPooja" checked> Daily Pooja / Spiritual practice</label>
+          </div>
+          <div style="margin-bottom:6px;">
+            <label class="checkbox-label"><input type="checkbox" id="mandPhoto" checked> Daily Photograph or Memory</label>
+          </div>
+          <div>
+            <label class="checkbox-label"><input type="checkbox" id="mandReflection" checked> Daily Reflection / Gratitude</label>
+          </div>
+        </div>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label">Optional Weekly Goals (Never penalize daily scores)</label>
+        <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:8px;">
+          <div>
+            <span style="font-size:0.75rem; color:var(--ink-muted);">Family Moments/wk</span>
+            <input type="number" id="wkFamilyGoal" class="text-input" value="3" />
+          </div>
+          <div>
+            <span style="font-size:0.75rem; color:var(--ink-muted);">Research Sessions/wk</span>
+            <input type="number" id="wkResearchGoal" class="text-input" value="2" />
+          </div>
+          <div>
+            <span style="font-size:0.75rem; color:var(--ink-muted);">Temple / Outings/wk</span>
+            <input type="number" id="wkOutingGoal" class="text-input" value="1" />
+          </div>
+        </div>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label">Visible Optional Sections</label>
+        <div style="display:flex; flex-wrap:wrap; gap:14px; font-size:0.84rem;">
+          <label class="checkbox-label"><input type="checkbox" id="showResearchSec" checked> Show Research Log</label>
+          <label class="checkbox-label"><input type="checkbox" id="showFunSec" checked> Show Fun &amp; Marvel Section</label>
+        </div>
+      </div>
+
+      <button class="btn btn-primary" id="saveSettingsBtn">Save Preferences</button>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <h3 class="card-title">Safe Storage, Backup &amp; Restore</h3>
+      </div>
+      <div class="info-banner" style="margin-top:0; margin-bottom:12px;">
+        <strong>Device Storage Notice:</strong> Your entries and IndexedDB scrapbook photos stay privately on this browser/device and do not automatically sync across different phones or computers. Export a JSON backup regularly to move or safeguard your data.
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-secondary" id="exportJsonBtn">Export JSON Backup</button>
+        <button class="btn btn-secondary" id="importJsonBtn">Import &amp; Restore JSON</button>
+        <input type="file" id="importJsonInput" accept="application/json" style="display:none;" />
+        <button class="btn btn-secondary" id="loadDemoBtn">Load Realistic 30-Day Sample</button>
+        <button class="btn btn-danger" id="resetAllBtn">Reset All Data</button>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- Bottom Navigation -->
+<nav class="bottom-nav">
+  <button class="nav-tab active" data-view="today">
+    <span class="nav-icon">✓</span>
+    <span>Today</span>
+  </button>
+  <button class="nav-tab" data-view="calendar">
+    <span class="nav-icon">📅</span>
+    <span>30 Days</span>
+  </button>
+  <button class="nav-tab" data-view="scrapbook">
+    <span class="nav-icon">🖼️</span>
+    <span>Scrapbook</span>
+  </button>
+  <button class="nav-tab" data-view="fitness">
+    <span class="nav-icon">💪</span>
+    <span>Fitness</span>
+  </button>
+  <button class="nav-tab" data-view="dashboard">
+    <span class="nav-icon">📊</span>
+    <span>Analytics</span>
+  </button>
+  <button class="nav-tab" data-view="report">
+    <span class="nav-icon">📜</span>
+    <span>Day 30</span>
+  </button>
+  <button class="nav-tab" data-view="settings">
+    <span class="nav-icon">⚙️</span>
+    <span>Settings</span>
+  </button>
+</nav>
+
+<script>
+(function() {
+  const STORAGE_KEY = 'lifestyle_reset_30d_v1';
+  const IDB_NAME = 'LifestyleJournalScrapbookDB';
+  const IDB_STORE = 'photos';
+  const IDB_FITNESS_STORE = 'fitnessPhotos';
+
+  // IndexedDB Photo Store for high-capacity multi-photo & fitness progress storage
+  const PhotoDB = {
+    db: null,
+    init() {
+      return new Promise((resolve) => {
+        if (!window.indexedDB) return resolve(null);
+        const req = indexedDB.open(IDB_NAME, 2);
+        req.onupgradeneeded = (e) => {
+          const db = e.target.result;
+          if (!db.objectStoreNames.contains(IDB_STORE)) {
+            db.createObjectStore(IDB_STORE, { keyPath: 'id' });
+          }
+          if (!db.objectStoreNames.contains(IDB_FITNESS_STORE)) {
+            db.createObjectStore(IDB_FITNESS_STORE, { keyPath: 'id' });
+          }
+        };
+        req.onsuccess = (e) => {
+          this.db = e.target.result;
+          resolve(this.db);
+        };
+        req.onerror = () => resolve(null);
+      });
+    },
+    saveFitnessPhoto(rec) {
+      return new Promise((resolve) => {
+        if (!this.db) return resolve(false);
+        const tx = this.db.transaction(IDB_FITNESS_STORE, 'readwrite');
+        tx.objectStore(IDB_FITNESS_STORE).put(rec);
+        tx.oncomplete = () => resolve(true);
+        tx.onerror = () => resolve(false);
+      });
+    },
+    getFitnessPhoto(id) {
+      return new Promise((resolve) => {
+        if (!this.db) return resolve(null);
+        const tx = this.db.transaction(IDB_FITNESS_STORE, 'readonly');
+        const req = tx.objectStore(IDB_FITNESS_STORE).get(id);
+        req.onsuccess = () => resolve(req.result || null);
+        req.onerror = () => resolve(null);
+      });
+    },
+    getAllFitnessPhotos() {
+      return new Promise((resolve) => {
+        if (!this.db) return resolve([]);
+        const tx = this.db.transaction(IDB_FITNESS_STORE, 'readonly');
+        const req = tx.objectStore(IDB_FITNESS_STORE).getAll();
+        req.onsuccess = () => resolve(req.result || []);
+        req.onerror = () => resolve([]);
+      });
+    },
+    deleteFitnessPhoto(id) {
+      return new Promise((resolve) => {
+        if (!this.db) return resolve(false);
+        const tx = this.db.transaction(IDB_FITNESS_STORE, 'readwrite');
+        tx.objectStore(IDB_FITNESS_STORE).delete(id);
+        tx.oncomplete = () => resolve(true);
+        tx.onerror = () => resolve(false);
+      });
+    },
+    savePhoto(photoRecord) {
+      return new Promise((resolve) => {
+        if (!this.db) return resolve(false);
+        const tx = this.db.transaction(IDB_STORE, 'readwrite');
+        tx.objectStore(IDB_STORE).put(photoRecord);
+        tx.oncomplete = () => resolve(true);
+        tx.onerror = () => resolve(false);
+      });
+    },
+    getPhoto(id) {
+      return new Promise((resolve) => {
+        if (!this.db) return resolve(null);
+        const tx = this.db.transaction(IDB_STORE, 'readonly');
+        const req = tx.objectStore(IDB_STORE).get(id);
+        req.onsuccess = () => resolve(req.result || null);
+        req.onerror = () => resolve(null);
+      });
+    },
+    getAllPhotos() {
+      return new Promise((resolve) => {
+        if (!this.db) return resolve([]);
+        const tx = this.db.transaction(IDB_STORE, 'readonly');
+        const req = tx.objectStore(IDB_STORE).getAll();
+        req.onsuccess = () => resolve(req.result || []);
+        req.onerror = () => resolve([]);
+      });
+    },
+    deletePhoto(id) {
+      return new Promise((resolve) => {
+        if (!this.db) return resolve(false);
+        const tx = this.db.transaction(IDB_STORE, 'readwrite');
+        tx.objectStore(IDB_STORE).delete(id);
+        tx.oncomplete = () => resolve(true);
+        tx.onerror = () => resolve(false);
+      });
+    },
+    clearAll() {
+      return new Promise((resolve) => {
+        if (!this.db) return resolve(false);
+        const tx = this.db.transaction(IDB_STORE, 'readwrite');
+        tx.objectStore(IDB_STORE).clear();
+        tx.oncomplete = () => resolve(true);
+        tx.onerror = () => resolve(false);
+      });
+    }
+  };
+
+  // Reorganized Habit Definitions (Categories A, B, C)
+  const CORE_CATEGORIES = [
+    {
+      id: 'fitness',
+      title: 'A. Fitness & Physical Health',
+      badge: 'Flexible Daily',
+      habits: [
+        { id: 'strength', name: 'Strength training', desc: 'Planned home workout session', habitType: 'flexible', inputType: 'strength' },
+        { id: 'steps', name: 'Daily steps', desc: 'Target: 10,000 steps', habitType: 'flexible', inputType: 'steps' },
+        { id: 'water', name: 'Water intake', desc: 'Recorded in litres', habitType: 'flexible', inputType: 'water' },
+        { id: 'protein', name: 'Protein intake', desc: 'Recorded in grams', habitType: 'flexible', inputType: 'protein' },
+        { id: 'healthyFood', name: 'Healthy eating', desc: 'Balanced, nourishing home meals', habitType: 'flexible' },
+        { id: 'fruitsVeg', name: 'Fruit & vegetable intake', desc: 'Daily servings of fruits and vegetables', habitType: 'flexible' },
+        { id: 'mobility', name: 'Mobility or stretching', desc: '5–10 mins joint care & stretching', habitType: 'flexible' }
+      ]
+    },
+    {
+      id: 'career',
+      title: 'B. Career & Learning',
+      badge: 'Reading Mandatory',
+      habits: [
+        { id: 'reading', name: 'Daily Reading', desc: 'Non-negotiable daily reading — never exempted on rest days', habitType: 'mandatory', isReading: true, inputType: 'reading' },
+        { id: 'dsa', name: 'DSA practice', desc: 'Problem solving & algorithms (Target: 1.0 hr)', habitType: 'flexible', inputType: 'dsa' }
+      ]
+    },
+    {
+      id: 'spiritual',
+      title: 'C. Personal & Spiritual Growth',
+      badge: 'Mindful Rhythm',
+      habits: [
+        { id: 'pooja', name: 'Daily Pooja', desc: 'Daily prayer or spiritual practice', habitType: 'mandatory', configKey: 'mandPooja' },
+        { id: 'temple', name: 'Temple visit', desc: 'Logged as a special spiritual experience (never penalized)', habitType: 'optional', inputType: 'temple' },
+        { id: 'sunMoment', name: 'Sunrise or sunset experience', desc: 'Pause to witness the sky (record either or both)', habitType: 'flexible', inputType: 'sun' },
+        { id: 'personalTime', name: 'Personal time', desc: 'Unpressured time for yourself', habitType: 'flexible' },
+        { id: 'gratitude', name: 'Gratitude & daily reflection', desc: 'One thing you are grateful for today', habitType: 'mandatory', configKey: 'mandReflection', inputType: 'gratitude' }
+      ]
+    }
+  ];
+
+  const ALL_CORE_HABITS = CORE_CATEGORIES.flatMap(c => c.habits);
+
+  function createEmptyDay(dayNum) {
+    const habits = {};
+    ALL_CORE_HABITS.forEach(h => { habits[h.id] = 'na'; }); // 'done' | 'missed' | 'na'
+    return {
+      day: dayNum,
+      dayType: 'regular', // 'regular' | 'rest' | 'illness'
+      illnessNote: '',
+      habits,
+      metrics: {
+        workoutMins: '',
+        steps: '',
+        waterL: '',
+        proteinG: '',
+        readingMins: '',
+        readingPages: '',
+        readingBook: '',
+        readingIllnessException: false,
+        dsaHours: '',
+        dsaTopic: '',
+        problemsSolved: '',
+        templeNote: '',
+        sawSunrise: false,
+        sawSunset: false,
+        gratitudeText: ''
+      },
+      research: {
+        topic: '',
+        mins: '',
+        learn1: '',
+        learn2: '',
+        learn3: '',
+        sources: ''
+      },
+      family: {
+        spentTime: false,
+        activity: '',
+        memory: ''
+      },
+      fun: {
+        marvel: '',
+        other: '',
+        hobbies: ''
+      },
+      photos: [], // [{ id, caption, dateStr, selectedForPrint }]
+      journal: {
+        bestMoment: '',
+        notes: '',
+        mood: 0,
+        energy: 0,
+        stress: 0
+      }
+    };
+  }
+
+  function getDefaultState() {
+    const todayStr = new Date().toISOString().split('T')[0];
+    const days = {};
+    for (let i = 1; i <= 30; i++) {
+      days[i] = createEmptyDay(i);
+    }
+    return {
+      selectedDay: 1,
+      fitnessPhotos: [],
+      settings: {
+        startDate: todayStr,
+        waterTarget: 2.2,
+        proteinTarget: 85,
+        readingTarget: 15,
+        stepTarget: 10000,
+        dsaTarget: 1.0,
+        workoutPref: 'Home strength training (45–60m)',
+        mandPooja: true,
+        mandPhoto: true,
+        mandReflection: true,
+        wkFamilyGoal: 3,
+        wkResearchGoal: 2,
+        wkOutingGoal: 1,
+        showResearchSec: true,
+        showFunSec: true
+      },
+      days
+    };
+  }
+
+  let state = loadAndMigrateState();
+  let charts = {};
+  let photoCache = {}; // id -> dataUrl
+
+  function migrateOldStatus(val) {
+    if (val === 'done') return 'done';
+    if (val === 'partial') return 'done'; // preserve positive historical progress
+    return 'na';
+  }
+
+  function loadAndMigrateState() {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) return getDefaultState();
+      const parsed = JSON.parse(raw);
+      const def = getDefaultState();
+      parsed.settings = Object.assign(def.settings, parsed.settings || {});
+      if (!Array.isArray(parsed.fitnessPhotos)) parsed.fitnessPhotos = [];
+      // Ensure readingTarget defaults to 15 if missing
+      if (!parsed.settings.readingTarget) parsed.settings.readingTarget = 15;
+
+      for (let i = 1; i <= 30; i++) {
+        const empty = createEmptyDay(i);
+        if (!parsed.days[i]) {
+          parsed.days[i] = empty;
+          continue;
+        }
+        const oldDay = parsed.days[i];
+        const newHabits = Object.assign({}, empty.habits);
+        ALL_CORE_HABITS.forEach(h => {
+          if (oldDay.habits && oldDay.habits[h.id]) {
+            const v = oldDay.habits[h.id];
+            newHabits[h.id] = (v === 'done' || v === 'missed' || v === 'na') ? v : migrateOldStatus(v);
+          }
+        });
+        // Migrate old 'learning' to 'reading' if reading wasn't set
+        if (oldDay.habits && oldDay.habits.learning === 'done' && newHabits.reading === 'na') {
+          newHabits.reading = 'done';
+        }
+        // Migrate old 'familyTime' checkbox
+        const oldFamDone = oldDay.habits && oldDay.habits.familyTime === 'done';
+
+        oldDay.habits = newHabits;
+        oldDay.metrics = Object.assign(empty.metrics, oldDay.metrics || {});
+        oldDay.research = Object.assign(empty.research, oldDay.research || {});
+        oldDay.family = Object.assign(empty.family, oldDay.family || {});
+        if (oldFamDone) oldDay.family.spentTime = true;
+        oldDay.fun = Object.assign(empty.fun, oldDay.fun || {});
+        oldDay.journal = Object.assign(empty.journal, oldDay.journal || {});
+        if (!Array.isArray(oldDay.photos)) oldDay.photos = [];
+
+        // Migrate legacy single photoData into IndexedDB-ready array
+        if (oldDay.journal.photoData) {
+          const legacyId = `legacy_d${i}_${Date.now()}`;
+          oldDay.photos.push({
+            id: legacyId,
+            caption: oldDay.journal.bestMoment || `Day ${i} Memory`,
+            dateStr: getFormattedDayDate(i, parsed.settings.startDate),
+            selectedForPrint: true,
+            _pendingDataUrl: oldDay.journal.photoData
+          });
+          delete oldDay.journal.photoData;
+        }
+      }
+      return parsed;
+    } catch (e) {
+      return getDefaultState();
+    }
+  }
+
+  async function flushLegacyPhotosToIDB() {
+    let migrated = false;
+    for (let i = 1; i <= 30; i++) {
+      const photos = state.days[i].photos || [];
+      for (const p of photos) {
+        if (p._pendingDataUrl) {
+          await PhotoDB.savePhoto({ id: p.id, day: i, dataUrl: p._pendingDataUrl });
+          photoCache[p.id] = p._pendingDataUrl;
+          delete p._pendingDataUrl;
+          migrated = true;
+        }
+      }
+    }
+    if (migrated) saveState();
+  }
+
+  function updateSaveBadge(statusText, isSaving) {
+    const badge = document.getElementById('saveStatusBadge');
+    const txt = document.getElementById('saveStatusText');
+    if (!badge || !txt) return;
+    badge.classList.toggle('saving', Boolean(isSaving));
+    txt.textContent = statusText;
+  }
+
+  function saveState(msg) {
+    updateSaveBadge('Saving...', true);
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+      const nowTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      setTimeout(() => updateSaveBadge(`Saved locally ✓ (${nowTime})`, false), 180);
+      if (msg) showToast(msg);
+    } catch (e) {
+      updateSaveBadge('Storage warning', true);
+      showToast('Warning: Local metadata storage near limit');
+    }
+  }
+
+  function showToast(msg) {
+    const el = document.getElementById('toast');
+    el.textContent = msg;
+    el.classList.add('show');
+    clearTimeout(window._toastTimer);
+    window._toastTimer = setTimeout(() => el.classList.remove('show'), 1800);
+  }
+
+  function isHabitMandatory(h) {
+    if (h.isReading) return true; // Reading is ALWAYS mandatory
+    if (h.habitType !== 'mandatory') return false;
+    if (h.configKey) return Boolean(state.settings[h.configKey]);
+    return true;
+  }
+
+  function isHabitExemptOnDay(h, dayObj) {
+    if (h.isReading) return false; // Reading is NEVER exempt on rest days
+    if (dayObj.dayType === 'rest') {
+      if (h.id === 'strength' || h.id === 'dsa' || h.id === 'steps') return true;
+    }
+    if (dayObj.dayType === 'illness') {
+      if (['strength', 'steps', 'water', 'protein', 'healthyFood', 'fruitsVeg', 'mobility', 'dsa', 'sunMoment'].includes(h.id)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  // Dual Scoring Engine: Mandatory Consistency vs. Flexible Completion
+  function computeDayScores(dayObj) {
+    // 1. Mandatory Habits
+    let mandEarned = 0;
+    let mandTotal = 0;
+
+    // Reading (always mandatory, unless explicit illness exception recorded)
+    const readingDone = dayObj.habits.reading === 'done';
+    const readingIllnessExcused = dayObj.dayType === 'illness' && dayObj.metrics.readingIllnessException && !readingDone;
+    if (!readingIllnessExcused) {
+      mandTotal += 1;
+      if (readingDone) mandEarned += 1;
+    }
+
+    // Pooja (if configured mandatory)
+    if (state.settings.mandPooja) {
+      mandTotal += 1;
+      if (dayObj.habits.pooja === 'done') mandEarned += 1;
+    }
+
+    // Gratitude / Reflection (if configured mandatory)
+    if (state.settings.mandReflection) {
+      mandTotal += 1;
+      if (dayObj.habits.gratitude === 'done') mandEarned += 1;
+    }
+
+    // Daily Photo / Memory (if configured mandatory)
+    if (state.settings.mandPhoto) {
+      mandTotal += 1;
+      if ((dayObj.photos && dayObj.photos.length > 0) || (dayObj.journal.bestMoment && dayObj.journal.bestMoment.trim().length > 0)) {
+        mandEarned += 1;
+      }
+    }
+
+    const mandatoryPct = mandTotal > 0 ? Math.round((mandEarned / mandTotal) * 100) : 100;
+
+    // 2. Flexible Habits (only count tracked/applicable habits so untracked 'na' items don't inflate or punish)
+    let flexDone = 0;
+    let flexTracked = 0;
+    ALL_CORE_HABITS.forEach(h => {
+      if (isHabitMandatory(h) || h.habitType === 'optional') return;
+      if (isHabitExemptOnDay(h, dayObj)) return;
+      const st = dayObj.habits[h.id] || 'na';
+      if (st === 'done') {
+        flexDone += 1;
+        flexTracked += 1;
+      } else if (st === 'missed') {
+        flexTracked += 1;
+      }
+    });
+
+    const flexiblePct = flexTracked > 0 ? Math.round((flexDone / flexTracked) * 100) : 0;
+
+    const hasAnyActivity =
+      Object.values(dayObj.habits).some(v => v !== 'na') ||
+      dayObj.dayType !== 'regular' ||
+      (dayObj.photos && dayObj.photos.length > 0) ||
+      dayObj.family.spentTime ||
+      Boolean(dayObj.research.topic) ||
+      Boolean(dayObj.journal.bestMoment) ||
+      Boolean(dayObj.journal.notes) ||
+      dayObj.journal.mood > 0;
+
+    return {
+      mandEarned,
+      mandTotal,
+      mandatoryPct,
+      flexDone,
+      flexTracked,
+      flexiblePct,
+      readingDone,
+      hasAnyActivity
+    };
+  }
+
+  function computeReadingStreaks() {
+    let current = 0;
+    for (let d = state.selectedDay; d >= 1; d--) {
+      const dayObj = state.days[d];
+      if (dayObj.habits.reading === 'done') {
+        current++;
+      } else if (dayObj.dayType === 'illness' && dayObj.metrics.readingIllnessException) {
+        // Explicit illness exception preserves streak without falsely marking reading complete
+        continue;
+      } else {
+        break;
+      }
+    }
+
+    let longest = 0;
+    let run = 0;
+    for (let d = 1; d <= 30; d++) {
+      const dayObj = state.days[d];
+      if (dayObj.habits.reading === 'done') {
+        run++;
+        if (run > longest) longest = run;
+      } else if (dayObj.dayType === 'illness' && dayObj.metrics.readingIllnessException) {
+        continue;
+      } else {
+        run = 0;
+      }
+    }
+    return { current, longest };
+  }
+
+  function getFormattedDayDate(dayNum, customStart) {
+    const startStr = customStart || state.settings.startDate;
+    if (!startStr) return `Day ${dayNum} of 30`;
+    const base = new Date(startStr + 'T00:00:00');
+    if (isNaN(base.getTime())) return `Day ${dayNum} of 30`;
+    base.setDate(base.getDate() + (dayNum - 1));
+    const opts = { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' };
+    return `Day ${dayNum} of 30 • ${base.toLocaleDateString('en-IN', opts)}`;
+  }
+
+  function getShortDate(dayNum) {
+    const startStr = state.settings.startDate;
+    if (!startStr) return `Day ${dayNum}`;
+    const base = new Date(startStr + 'T00:00:00');
+    if (isNaN(base.getTime())) return `Day ${dayNum}`;
+    base.setDate(base.getDate() + (dayNum - 1));
+    return `Day ${dayNum} (${base.toLocaleDateString('en-IN', { month: 'short', day: 'numeric' })})`;
+  }
+
+  // Day Selector
+  function initDaySelector() {
+    const sel = document.getElementById('daySelect');
+    sel.innerHTML = '';
+    for (let i = 1; i <= 30; i++) {
+      const opt = document.createElement('option');
+      opt.value = i;
+      opt.textContent = `Day ${i}`;
+      sel.appendChild(opt);
+    }
+    sel.value = state.selectedDay;
+
+    sel.addEventListener('change', () => {
+      state.selectedDay = parseInt(sel.value, 10);
+      saveState();
+      renderAll();
+    });
+
+    document.getElementById('prevDayBtn').addEventListener('click', () => {
+      if (state.selectedDay > 1) {
+        state.selectedDay--;
+        saveState();
+        renderAll();
+      }
+    });
+
+    document.getElementById('nextDayBtn').addEventListener('click', () => {
+      if (state.selectedDay < 30) {
+        state.selectedDay++;
+        saveState();
+        renderAll();
+      }
+    });
+  }
+
+  // Render Today View
+  function renderTodayView() {
+    const d = state.selectedDay;
+    const dayObj = state.days[d];
+    document.getElementById('daySelect').value = d;
+    document.getElementById('prevDayBtn').disabled = d <= 1;
+    document.getElementById('nextDayBtn').disabled = d >= 30;
+    document.getElementById('dayDateLabel').textContent = getFormattedDayDate(d);
+
+    const scores = computeDayScores(dayObj);
+    const streaks = computeReadingStreaks();
+
+    document.getElementById('heroStreakBadge').textContent = `Reading Streak: ${streaks.current}d`;
+    document.getElementById('mandatoryPctText').textContent = `${scores.mandatoryPct}% (${scores.mandEarned}/${scores.mandTotal})`;
+    document.getElementById('mandatoryBarFill').style.width = `${scores.mandatoryPct}%`;
+    document.getElementById('flexiblePctText').textContent = scores.flexTracked > 0 ? `${scores.flexiblePct}% (${scores.flexDone}/${scores.flexTracked})` : 'No flexible habits logged yet';
+    document.getElementById('flexibleBarFill').style.width = `${scores.flexiblePct}%`;
+
+    // Overview strips
+    const rMins = dayObj.metrics.readingMins;
+    const rPages = dayObj.metrics.readingPages;
+    document.getElementById('ovReadingVal').textContent = scores.readingDone ? 'Done ✓' : (dayObj.metrics.readingIllnessException ? 'Excused' : 'Open');
+    document.getElementById('ovReadingSub').textContent = (rMins || rPages)
+      ? `${rMins ? rMins + ' min' : ''}${rMins && rPages ? ' • ' : ''}${rPages ? rPages + ' pg' : ''}`
+      : `Target: ${state.settings.readingTarget} min`;
+
+    document.getElementById('ovPoojaVal').textContent = dayObj.habits.pooja === 'done' ? 'Done ✓' : 'Open';
+    document.getElementById('ovPhotoSub').textContent = `Photos: ${(dayObj.photos || []).length} saved`;
+
+    const dsaH = parseFloat(dayObj.metrics.dsaHours) || 0;
+    document.getElementById('ovDsaVal').textContent = `${dsaH.toFixed(1)}h`;
+    document.getElementById('ovDsaSub').textContent = dayObj.dayType === 'rest' ? 'Optional on rest day' : `Target: ${state.settings.dsaTarget}h`;
+
+    const j = dayObj.journal;
+    document.getElementById('ovMoodVal').textContent = (j.mood || j.energy || j.stress)
+      ? `${j.mood || '–'} / ${j.energy || '–'} / ${j.stress || '–'}`
+      : '—';
+
+    let heroMsg = 'A calm, intentional day';
+    if (dayObj.dayType === 'rest') heroMsg = 'Rest & recovery day — recharge gently';
+    else if (dayObj.dayType === 'illness') heroMsg = 'Illness recovery — rest comes first';
+    else if (scores.mandatoryPct === 100) heroMsg = 'All mandatory daily anchors complete!';
+    document.getElementById('dayHeroStatus').textContent = heroMsg;
+
+    document.querySelectorAll('.day-type-btn').forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.daytype === dayObj.dayType);
+    });
+
+    const notice = document.getElementById('dayTypeNotice');
+    const illWrap = document.getElementById('illnessNoteWrap');
+    if (dayObj.dayType === 'rest') {
+      notice.innerHTML = '<strong>Rest Day Active:</strong> Strength training is exempt, and DSA &amp; 10,000 steps are optional. <strong>Daily reading remains mandatory.</strong>';
+      illWrap.style.display = 'none';
+    } else if (dayObj.dayType === 'illness') {
+      notice.innerHTML = '<strong>Illness / Recovery Day:</strong> Physical activities are exempt. Reading stays mandatory, or you can record an explicit illness exception below.';
+      illWrap.style.display = 'block';
+      document.getElementById('illnessNoteInput').value = dayObj.illnessNote || '';
+    } else {
+      notice.innerHTML = 'Tap any pill to cycle: <strong>Not Tracked → Completed ✓ → Not Completed</strong>. Unchecked items never auto-fail.';
+      illWrap.style.display = 'none';
+    }
+
+    // Render Categories A, B, C
+    const container = document.getElementById('habitsContainer');
+    container.innerHTML = '';
+
+    CORE_CATEGORIES.forEach(cat => {
+      const card = document.createElement('div');
+      card.className = 'card category-card';
+      card.innerHTML = `
+        <div class="cat-header">
+          <h3 class="cat-title">${cat.title}</h3>
+          <span class="cat-badge ${cat.id === 'career' ? 'mandatory' : ''}">${cat.badge}</span>
+        </div>
+      `;
+
+      cat.habits.forEach(h => {
+        const st = dayObj.habits[h.id] || 'na';
+        const isMand = isHabitMandatory(h);
+        const isExempt = isHabitExemptOnDay(h, dayObj);
+
+        let pillText = 'Not Tracked';
+        let pillStatus = 'na';
+
+        if (isExempt && st === 'na') {
+          pillText = dayObj.dayType === 'rest' ? 'Rest Exempt' : 'Recovery Exempt';
+          pillStatus = 'na';
+        } else if (st === 'done') {
+          pillText = 'Completed ✓';
+          pillStatus = 'done';
+        } else if (st === 'missed') {
+          pillText = 'Not Completed';
+          pillStatus = 'missed';
+        }
+
+        let tagHtml = `<span class="tag-pill tag-flexible">Flexible</span>`;
+        if (h.habitType === 'optional') tagHtml = `<span class="tag-pill tag-optional">Optional Experience</span>`;
+        else if (isMand) tagHtml = `<span class="tag-pill tag-mandatory">Mandatory Daily</span>`;
+
+        let descText = h.desc;
+        if (h.id === 'water') descText = `Target: ~${state.settings.waterTarget} L daily`;
+        if (h.id === 'protein') descText = `Target: ~${state.settings.proteinTarget} g daily`;
+        if (h.id === 'steps') descText = dayObj.dayType === 'rest' ? 'Optional light movement on rest day' : `Target: ${Number(state.settings.stepTarget).toLocaleString()} steps`;
+        if (h.id === 'reading') descText = `Mandatory daily habit (Target: ${state.settings.readingTarget} mins) — never exempted on rest days`;
+        if (h.id === 'dsa') descText = dayObj.dayType === 'rest' ? 'Optional on rest day' : `Target: ${state.settings.dsaTarget} hour(s)`;
+
+        const row = document.createElement('div');
+        row.className = `habit-item ${h.isReading ? 'reading-highlight' : ''}`;
+        row.innerHTML = `
+          <div class="habit-main">
+            <div class="habit-info">
+              <div class="habit-name">${h.name} ${tagHtml}</div>
+              <div class="habit-desc">${descText}</div>
+            </div>
+            <button type="button" class="status-pill" data-habit="${h.id}" data-status="${pillStatus}">${pillText}</button>
+          </div>
+          ${renderHabitExtra(h, dayObj)}
+        `;
+        card.appendChild(row);
+      });
+
+      container.appendChild(card);
+    });
+
+    bindHabitEvents();
+    renderDrawers(dayObj);
+  }
+
+  function renderHabitExtra(h, dayObj) {
+    const m = dayObj.metrics;
+    if (h.inputType === 'strength') {
+      return `<div class="habit-extra">
+        <span style="font-size:0.8rem; color:var(--ink-muted);">Duration (mins):</span>
+        <input type="number" class="mini-input metric-input" data-metric="workoutMins" placeholder="50" value="${m.workoutMins}">
+        <button type="button" class="quick-chip" data-set-metric="workoutMins" data-val="45">45m</button>
+        <button type="button" class="quick-chip" data-set-metric="workoutMins" data-val="60">60m</button>
+      </div>`;
+    }
+    if (h.inputType === 'steps') {
+      return `<div class="habit-extra">
+        <span style="font-size:0.8rem; color:var(--ink-muted);">Steps:</span>
+        <input type="number" class="mini-input metric-input" data-metric="steps" placeholder="${state.settings.stepTarget}" value="${m.steps}">
+        <button type="button" class="quick-chip" data-add-metric="steps" data-val="2500">+2.5k</button>
+        <button type="button" class="quick-chip" data-set-metric="steps" data-val="${state.settings.stepTarget}">${Number(state.settings.stepTarget).toLocaleString()}</button>
+      </div>`;
+    }
+    if (h.inputType === 'water') {
+      return `<div class="habit-extra">
+        <span style="font-size:0.8rem; color:var(--ink-muted);">Litres:</span>
+        <input type="number" step="0.05" class="mini-input metric-input" data-metric="waterL" placeholder="${state.settings.waterTarget}" value="${m.waterL}">
+        <button type="button" class="quick-chip" data-add-metric="waterL" data-val="0.25">+0.25L</button>
+        <button type="button" class="quick-chip" data-add-metric="waterL" data-val="0.5">+0.5L</button>
+      </div>`;
+    }
+    if (h.inputType === 'protein') {
+      return `<div class="habit-extra">
+        <span style="font-size:0.8rem; color:var(--ink-muted);">Protein (g):</span>
+        <input type="number" class="mini-input metric-input" data-metric="proteinG" placeholder="${state.settings.proteinTarget}" value="${m.proteinG}">
+        <button type="button" class="quick-chip" data-add-metric="proteinG" data-val="20">+20g</button>
+        <button type="button" class="quick-chip" data-add-metric="proteinG" data-val="30">+30g</button>
+      </div>`;
+    }
+    if (h.inputType === 'reading') {
+      return `<div class="habit-extra">
+        <span style="font-size:0.8rem; color:var(--ink-muted);">Mins:</span>
+        <input type="number" class="mini-input metric-input" data-metric="readingMins" placeholder="${state.settings.readingTarget}" value="${m.readingMins}">
+        <span style="font-size:0.8rem; color:var(--ink-muted);">Pages:</span>
+        <input type="number" class="mini-input metric-input" data-metric="readingPages" placeholder="10" value="${m.readingPages}">
+        <input type="text" class="mini-input wide metric-input" data-metric="readingBook" placeholder="Book or article title..." value="${escapeHtml(m.readingBook)}">
+        ${dayObj.dayType === 'illness' ? `
+          <label class="checkbox-label" style="width:100%; margin-top:4px; color:var(--terracotta);">
+            <input type="checkbox" class="metric-check" data-metric="readingIllnessException" ${m.readingIllnessException ? 'checked' : ''}>
+            Record explicit illness exception (too unwell to read today)
+          </label>
+        ` : ''}
+      </div>`;
+    }
+    if (h.inputType === 'dsa') {
+      return `<div class="habit-extra">
+        <span style="font-size:0.8rem; color:var(--ink-muted);">Hours:</span>
+        <input type="number" step="0.25" class="mini-input metric-input" data-metric="dsaHours" placeholder="${state.settings.dsaTarget}" value="${m.dsaHours}">
+        <input type="text" class="mini-input wide metric-input" data-metric="dsaTopic" placeholder="Topic / Problems solved..." value="${escapeHtml(m.dsaTopic)}">
+      </div>`;
+    }
+    if (h.inputType === 'temple') {
+      return `<div class="habit-extra">
+        <input type="text" class="mini-input wide metric-input" data-metric="templeNote" placeholder="Temple visited or peaceful moment (optional)..." value="${escapeHtml(m.templeNote)}">
+      </div>`;
+    }
+    if (h.inputType === 'sun') {
+      return `<div class="habit-extra">
+        <label class="checkbox-label">
+          <input type="checkbox" class="metric-check" data-metric="sawSunrise" ${m.sawSunrise ? 'checked' : ''}>
+          🌅 Sunrise
+        </label>
+        <label class="checkbox-label" style="margin-left:10px;">
+          <input type="checkbox" class="metric-check" data-metric="sawSunset" ${m.sawSunset ? 'checked' : ''}>
+          🌇 Sunset
+        </label>
+      </div>`;
+    }
+    if (h.inputType === 'gratitude') {
+      return `<div class="habit-extra">
+        <input type="text" class="mini-input wide metric-input" data-metric="gratitudeText" placeholder="One thing I am grateful for today..." value="${escapeHtml(m.gratitudeText)}">
+      </div>`;
+    }
+    return '';
+  }
+
+  function escapeHtml(str) {
+    if (!str) return '';
+    return String(str).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  }
+
+  function bindHabitEvents() {
+    const dayObj = state.days[state.selectedDay];
+
+    document.querySelectorAll('.status-pill').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const hid = btn.dataset.habit;
+        const cur = dayObj.habits[hid] || 'na';
+        // Cycle: na -> done -> missed -> na
+        dayObj.habits[hid] = cur === 'na' ? 'done' : (cur === 'done' ? 'missed' : 'na');
+        saveState('Updated');
+        renderTodayView();
+      });
+    });
+
+    document.querySelectorAll('.metric-input').forEach(inp => {
+      inp.addEventListener('change', () => {
+        const key = inp.dataset.metric;
+        dayObj.metrics[key] = inp.value;
+        // Never auto-mark reading complete; gently assist optional/flexible metrics only
+        if (key === 'templeNote' && inp.value.trim()) dayObj.habits.temple = 'done';
+        if (key === 'gratitudeText' && inp.value.trim() && dayObj.habits.gratitude === 'na') dayObj.habits.gratitude = 'done';
+        saveState('Saved');
+        renderTodayView();
+      });
+    });
+
+    document.querySelectorAll('.metric-check').forEach(chk => {
+      chk.addEventListener('change', () => {
+        const key = chk.dataset.metric;
+        dayObj.metrics[key] = chk.checked;
+        if ((key === 'sawSunrise' || key === 'sawSunset') && (dayObj.metrics.sawSunrise || dayObj.metrics.sawSunset)) {
+          dayObj.habits.sunMoment = 'done';
+        }
+        saveState('Saved');
+        renderTodayView();
+      });
+    });
+
+    document.querySelectorAll('[data-set-metric]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const key = btn.dataset.setMetric;
+        dayObj.metrics[key] = btn.dataset.val;
+        saveState('Saved');
+        renderTodayView();
+      });
+    });
+
+    document.querySelectorAll('[data-add-metric]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const key = btn.dataset.addMetric;
+        const add = parseFloat(btn.dataset.val);
+        const cur = parseFloat(dayObj.metrics[key]) || 0;
+        dayObj.metrics[key] = String(Math.round((cur + add) * 100) / 100);
+        saveState('Saved');
+        renderTodayView();
+      });
+    });
+  }
+
+  async function renderDrawers(dayObj) {
+    // Visibility settings for optional drawers
+    document.getElementById('researchDrawer').style.display = state.settings.showResearchSec ? 'block' : 'none';
+    document.getElementById('funDrawer').style.display = state.settings.showFunSec ? 'block' : 'none';
+
+    // Family
+    document.getElementById('famSpentTime').checked = Boolean(dayObj.family.spentTime);
+    document.getElementById('famActivity').value = dayObj.family.activity || '';
+    document.getElementById('famMemory').value = dayObj.family.memory || '';
+    document.getElementById('familyDrawerBadge').textContent = dayObj.family.spentTime ? 'Logged ✓' : 'Open';
+
+    // Memories & Journal
+    const j = dayObj.journal;
+    document.getElementById('jBestMoment').value = j.bestMoment || '';
+    document.getElementById('jNotes').value = j.notes || '';
+    document.getElementById('memoryDrawerBadge').textContent = `${(dayObj.photos || []).length} Photo(s)`;
+
+    ['mood', 'energy', 'stress'].forEach(key => {
+      const val = j[key] || 0;
+      document.getElementById(`${key}ValLabel`).textContent = val ? `${val} / 5` : 'Not rated';
+      document.querySelectorAll(`.rating-pills[data-rating="${key}"] .rate-btn`).forEach(btn => {
+        btn.classList.toggle('active', parseInt(btn.dataset.val, 10) === val);
+      });
+    });
+
+    // Photos list for current day
+    const photosGrid = document.getElementById('dayPhotosGrid');
+    photosGrid.innerHTML = '';
+    for (const p of (dayObj.photos || [])) {
+      let dataUrl = photoCache[p.id];
+      if (!dataUrl) {
+        const rec = await PhotoDB.getPhoto(p.id);
+        if (rec && rec.dataUrl) {
+          dataUrl = rec.dataUrl;
+          photoCache[p.id] = dataUrl;
+        }
+      }
+      const item = document.createElement('div');
+      item.className = 'photo-entry-card';
+      item.innerHTML = `
+        ${dataUrl ? `<img src="${dataUrl}" alt="${escapeHtml(p.caption)}">` : '<div style="height:120px;display:flex;align-items:center;justify-content:center;background:#eee;border-radius:8px;font-size:0.8rem;">Photo stored locally</div>'}
+        <input type="text" class="text-input photo-cap-input" data-pid="${p.id}" placeholder="Write photo caption..." value="${escapeHtml(p.caption)}" style="margin-bottom:6px; font-size:0.82rem; padding:6px 8px;">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <label class="checkbox-label" style="font-size:0.75rem;">
+            <input type="checkbox" class="photo-print-chk" data-pid="${p.id}" ${p.selectedForPrint !== false ? 'checked' : ''}>
+            Include in print
+          </label>
+          <button type="button" class="btn btn-danger photo-del-btn" data-pid="${p.id}" style="padding:4px 9px; font-size:0.74rem;">Delete</button>
+        </div>
+      `;
+      photosGrid.appendChild(item);
+    }
+
+    document.querySelectorAll('.photo-cap-input').forEach(inp => {
+      inp.addEventListener('change', () => {
+        const p = dayObj.photos.find(x => x.id === inp.dataset.pid);
+        if (p) { p.caption = inp.value; saveState('Caption saved'); }
+      });
+    });
+
+    document.querySelectorAll('.photo-print-chk').forEach(chk => {
+      chk.addEventListener('change', () => {
+        const p = dayObj.photos.find(x => x.id === chk.dataset.pid);
+        if (p) { p.selectedForPrint = chk.checked; saveState('Updated'); }
+      });
+    });
+
+    document.querySelectorAll('.photo-del-btn').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const pid = btn.dataset.pid;
+        dayObj.photos = dayObj.photos.filter(x => x.id !== pid);
+        delete photoCache[pid];
+        await PhotoDB.deletePhoto(pid);
+        saveState('Photo removed');
+        renderTodayView();
+      });
+    });
+
+    // Research
+    const r = dayObj.research;
+    document.getElementById('resTopic').value = r.topic || '';
+    document.getElementById('resMins').value = r.mins || '';
+    document.getElementById('resLearn1').value = r.learn1 || '';
+    document.getElementById('resLearn2').value = r.learn2 || '';
+    document.getElementById('resLearn3').value = r.learn3 || '';
+    document.getElementById('resSources').value = r.sources || '';
+    document.getElementById('researchDrawerBadge').textContent = r.topic ? 'Logged ✓' : 'Open';
+
+    // Fun
+    const f = dayObj.fun;
+    document.getElementById('funMarvel').value = f.marvel || '';
+    document.getElementById('funOther').value = f.other || '';
+    document.getElementById('funHobbies').value = f.hobbies || '';
+    document.getElementById('funDrawerBadge').textContent = (f.marvel || f.other || f.hobbies) ? 'Logged ✓' : 'Optional';
+  }
+
+  function initDrawerEvents() {
+    document.querySelectorAll('.day-type-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        state.days[state.selectedDay].dayType = btn.dataset.daytype;
+        saveState('Day mode updated');
+        renderTodayView();
+      });
+    });
+
+    document.getElementById('illnessNoteInput').addEventListener('change', (e) => {
+      state.days[state.selectedDay].illnessNote = e.target.value;
+      saveState('Recovery note saved');
+    });
+
+    // Family bindings
+    document.getElementById('famSpentTime').addEventListener('change', (e) => {
+      state.days[state.selectedDay].family.spentTime = e.target.checked;
+      saveState('Saved');
+      renderTodayView();
+    });
+    document.getElementById('famActivity').addEventListener('change', (e) => {
+      state.days[state.selectedDay].family.activity = e.target.value;
+      if (e.target.value.trim()) state.days[state.selectedDay].family.spentTime = true;
+      saveState('Family memory saved');
+      renderTodayView();
+    });
+    document.getElementById('famMemory').addEventListener('change', (e) => {
+      state.days[state.selectedDay].family.memory = e.target.value;
+      saveState('Family note saved');
+    });
+
+    // Journal & Ratings
+    document.getElementById('jBestMoment').addEventListener('change', (e) => {
+      state.days[state.selectedDay].journal.bestMoment = e.target.value;
+      saveState('Saved');
+      renderTodayView();
+    });
+    document.getElementById('jNotes').addEventListener('change', (e) => {
+      state.days[state.selectedDay].journal.notes = e.target.value;
+      saveState('Journal saved');
+    });
+
+    document.querySelectorAll('.rating-pills').forEach(group => {
+      const rKey = group.dataset.rating;
+      group.querySelectorAll('.rate-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const val = parseInt(btn.dataset.val, 10);
+          const j = state.days[state.selectedDay].journal;
+          j[rKey] = j[rKey] === val ? 0 : val;
+          saveState('Saved');
+          renderTodayView();
+        });
+      });
+    });
+
+    // Multi-photo upload
+    const dropZone = document.getElementById('photoDropZone');
+    const photoInput = document.getElementById('photoInput');
+    dropZone.addEventListener('click', () => photoInput.click());
+
+    photoInput.addEventListener('change', async (e) => {
+      const files = Array.from(e.target.files || []);
+      if (!files.length) return;
+      const d = state.selectedDay;
+      const dayObj = state.days[d];
+
+      for (const file of files) {
+        const dataUrl = await compressImageAsync(file, 960, 0.8);
+        const pid = `photo_d${d}_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`;
+        await PhotoDB.savePhoto({ id: pid, day: d, dataUrl });
+        photoCache[pid] = dataUrl;
+        dayObj.photos.push({
+          id: pid,
+          caption: '',
+          dateStr: getFormattedDayDate(d),
+          selectedForPrint: true
+        });
+      }
+      photoInput.value = '';
+      saveState(`${files.length} photo(s) added to scrapbook`);
+      renderTodayView();
+    });
+
+    // Research bindings
+    const resFields = [['resTopic', 'topic'], ['resMins', 'mins'], ['resLearn1', 'learn1'], ['resLearn2', 'learn2'], ['resLearn3', 'learn3'], ['resSources', 'sources']];
+    resFields.forEach(([elId, key]) => {
+      document.getElementById(elId).addEventListener('change', (e) => {
+        state.days[state.selectedDay].research[key] = e.target.value;
+        saveState('Research saved');
+        renderTodayView();
+      });
+    });
+
+    // Fun bindings
+    const funFields = [['funMarvel', 'marvel'], ['funOther', 'other'], ['funHobbies', 'hobbies']];
+    funFields.forEach(([elId, key]) => {
+      document.getElementById(elId).addEventListener('change', (e) => {
+        state.days[state.selectedDay].fun[key] = e.target.value;
+        saveState('Saved');
+        renderTodayView();
+      });
+    });
+  }
+
+  function compressImageAsync(file, maxDim, quality) {
+    return new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        const img = new Image();
+        img.onload = () => {
+          let w = img.width;
+          let h = img.height;
+          if (w > maxDim || h > maxDim) {
+            if (w > h) { h = Math.round((h * maxDim) / w); w = maxDim; }
+            else { w = Math.round((w * maxDim) / h); h = maxDim; }
+          }
+          const canvas = document.createElement('canvas');
+          canvas.width = w;
+          canvas.height = h;
+          canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+          resolve(canvas.toDataURL('image/jpeg', quality));
+        };
+        img.src = ev.target.result;
+      };
+      reader.readAsDataURL(file);
+    });
+  }
+
+  // Render Calendar View
+  function renderCalendarView() {
+    const grid = document.getElementById('calendarGrid');
+    grid.innerHTML = '';
+    let loggedCount = 0;
+
+    for (let i = 1; i <= 30; i++) {
+      const dayObj = state.days[i];
+      const sc = computeDayScores(dayObj);
+      if (sc.hasAnyActivity) loggedCount++;
+
+      const cell = document.createElement('div');
+      cell.className = 'cal-cell';
+      if (i === state.selectedDay) cell.classList.add('selected');
+
+      if (dayObj.dayType === 'rest' || dayObj.dayType === 'illness') {
+        cell.classList.add('lvl-rest');
+      } else if (sc.hasAnyActivity && sc.mandatoryPct === 100) {
+        cell.classList.add('lvl-high');
+      } else if (sc.hasAnyActivity) {
+        cell.classList.add('lvl-mid');
+      }
+
+      const icons = [];
+      if (sc.readingDone) icons.push('📖');
+      if (dayObj.dayType === 'rest') icons.push('🛌');
+      if (dayObj.dayType === 'illness') icons.push('🌿');
+      if (dayObj.photos && dayObj.photos.length > 0) icons.push('📷');
+      if (dayObj.habits.temple === 'done') icons.push('🛕');
+
+      cell.innerHTML = `
+        <div class="cal-day-num">Day ${i}</div>
+        <div class="cal-pct">${sc.hasAnyActivity ? 'M:' + sc.mandatoryPct + '%' : '—'}</div>
+        <div class="cal-icons">${icons.join(' ')}</div>
+      `;
+
+      cell.addEventListener('click', () => {
+        state.selectedDay = i;
+        saveState();
+        switchView('today');
+      });
+
+      grid.appendChild(cell);
+    }
+
+    document.getElementById('calActiveSummary').textContent = `${loggedCount} / 30 Logged`;
+  }
+
+  // Render Scrapbook Gallery View
+  async function renderScrapbookView() {
+    const gallery = document.getElementById('scrapbookGallery');
+    gallery.innerHTML = '';
+    const onlySelected = document.getElementById('scrapbookSelectedOnly').checked;
+
+    let totalPhotos = 0;
+    let selectedCount = 0;
+
+    for (let i = 1; i <= 30; i++) {
+      const dayObj = state.days[i];
+      for (const p of (dayObj.photos || [])) {
+        totalPhotos++;
+        if (p.selectedForPrint !== false) selectedCount++;
+        if (onlySelected && p.selectedForPrint === false) continue;
+
+        let dataUrl = photoCache[p.id];
+        if (!dataUrl) {
+          const rec = await PhotoDB.getPhoto(p.id);
+          if (rec && rec.dataUrl) {
+            dataUrl = rec.dataUrl;
+            photoCache[p.id] = dataUrl;
+          }
+        }
+
+        const card = document.createElement('div');
+        card.className = 'polaroid-card';
+        card.innerHTML = `
+          ${dataUrl ? `<img class="polaroid-img" src="${dataUrl}" alt="${escapeHtml(p.caption)}">` : ''}
+          <div class="polaroid-meta">
+            <span>${getFormattedDayDate(i)}</span>
+            <label class="checkbox-label no-print" style="font-size:0.74rem;">
+              <input type="checkbox" class="sb-print-toggle" data-day="${i}" data-pid="${p.id}" ${p.selectedForPrint !== false ? 'checked' : ''}>
+              Select
+            </label>
+          </div>
+          <div class="polaroid-caption">${escapeHtml(p.caption || 'A moment worth keeping')}</div>
+          ${dayObj.journal.bestMoment ? `<div class="polaroid-memory"><strong>Memory:</strong> ${escapeHtml(dayObj.journal.bestMoment)}</div>` : ''}
+          <div class="handwritten-lines">
+            <div style="font-size:0.72rem; color:#888; border:none; height:auto; margin-bottom:2px;">Handwritten Scrapbook Notes:</div>
+            <div></div><div></div><div></div>
+          </div>
+        `;
+        gallery.appendChild(card);
+      }
+    }
+
+    document.getElementById('totalScrapbookCount').textContent = `${totalPhotos} Photos`;
+    document.getElementById('selectedPhotoCount').textContent = selectedCount;
+
+    if (gallery.children.length === 0) {
+      gallery.innerHTML = `<div class="card" style="grid-column:1/-1; text-align:center; color:var(--ink-muted);">
+        No photographs attached yet. Add photos in your daily check-ins to build your printable 30-day scrapbook.
+      </div>`;
+    }
+
+    document.querySelectorAll('.sb-print-toggle').forEach(chk => {
+      chk.addEventListener('change', () => {
+        const d = parseInt(chk.dataset.day, 10);
+        const p = state.days[d].photos.find(x => x.id === chk.dataset.pid);
+        if (p) {
+          p.selectedForPrint = chk.checked;
+          saveState();
+          renderScrapbookView();
+    renderFitnessJourneyView();
+        }
+      });
+    });
+  }
+
+  async function exportPrintableScrapbookHtml() {
+    const onlySelected = document.getElementById('scrapbookSelectedOnly').checked;
+    let itemsHtml = '';
+    for (let i = 1; i <= 30; i++) {
+      const dayObj = state.days[i];
+      for (const p of (dayObj.photos || [])) {
+        if (onlySelected && p.selectedForPrint === false) continue;
+        let dataUrl = photoCache[p.id];
+        if (!dataUrl) {
+          const rec = await PhotoDB.getPhoto(p.id);
+          if (rec) dataUrl = rec.dataUrl;
+        }
+        itemsHtml += `
+          <div style="border:1px solid #DDD; border-radius:12px; padding:14px; margin-bottom:18px; break-inside:avoid;">
+            ${dataUrl ? `<img src="${dataUrl}" style="width:100%; max-height:320px; object-fit:cover; border-radius:8px;">` : ''}
+            <div style="font-size:12px; color:#527366; font-weight:bold; margin-top:8px;">${getFormattedDayDate(i)}</div>
+            <div style="font-size:16px; font-weight:bold; margin:4px 0;">${escapeHtml(p.caption || 'Daily Memory')}</div>
+            ${dayObj.journal.bestMoment ? `<div style="font-size:13px; color:#444; background:#F7F5F0; padding:8px; border-radius:6px;">${escapeHtml(dayObj.journal.bestMoment)}</div>` : ''}
+            <div style="margin-top:12px; font-size:11px; color:#888;">Written Memory Space:</div>
+            <div style="border-bottom:1px solid #CCC; height:24px;"></div>
+            <div style="border-bottom:1px solid #CCC; height:24px;"></div>
+          </div>
+        `;
+      }
+    }
+    const doc = `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>30-Day Printable Photo Scrapbook</title></head><body style="font-family:Georgia,serif; max-width:740px; margin:20px auto; color:#232A27;">
+      <h1 style="color:#3B5249;">30-Day Lifestyle Photo Scrapbook</h1>
+      <p style="color:#64706B;">Print this sheet (Ctrl/Cmd + P) to cut and paste your photographs and handwritten memories.</p>
+      ${itemsHtml || '<p>No photographs selected yet.</p>'}
+    </body></html>`;
+    const blob = new Blob([doc], { type: 'text/html' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = '30_Day_Printable_Scrapbook.html';
+    a.click();
+    URL.revokeObjectURL(url);
+    showToast('Printable scrapbook exported');
+  }
+
+  // Comprehensive 30-Day Analytics Engine
+  function computeAnalytics() {
+    const allDays = [];
+    for (let i = 1; i <= 30; i++) allDays.push(state.days[i]);
+
+    const activeDays = allDays.filter(d => computeDayScores(d).hasAnyActivity);
+    const pool = activeDays.length > 0 ? activeDays : allDays;
+
+    // Mandatory vs Flexible averages
+    let mandEarnedSum = 0, mandTotalSum = 0;
+    let flexDoneSum = 0, flexTrackedSum = 0;
+    pool.forEach(d => {
+      const s = computeDayScores(d);
+      mandEarnedSum += s.mandEarned;
+      mandTotalSum += s.mandTotal;
+      flexDoneSum += s.flexDone;
+      flexTrackedSum += s.flexTracked;
+    });
+
+    const mandatoryConsistencyPct = mandTotalSum > 0 ? Math.round((mandEarnedSum / mandTotalSum) * 100) : 0;
+    const flexibleCompletionPct = flexTrackedSum > 0 ? Math.round((flexDoneSum / flexTrackedSum) * 100) : 0;
+
+    // Reading stats (always evaluated over active days / 30 days)
+    let readDays = 0, readMinsTotal = 0, readPagesTotal = 0;
+    allDays.forEach(d => {
+      if (d.habits.reading === 'done') readDays++;
+      readMinsTotal += parseFloat(d.metrics.readingMins) || 0;
+      readPagesTotal += parseFloat(d.metrics.readingPages) || 0;
+    });
+    const readingConsistencyPct = pool.length > 0 ? Math.round((readDays / pool.length) * 100) : 0;
+    const streaks = computeReadingStreaks();
+
+    // Fitness stats
+    let strengthSessions = 0, workoutMinsTotal = 0;
+    let stepsSum = 0, stepsCount = 0, tenKDays = 0;
+    let waterSum = 0, waterCount = 0;
+    let proteinSum = 0, proteinCount = 0;
+    let healthyEatDone = 0, healthyEatTracked = 0;
+
+    // Career & Research
+    let dsaHoursTotal = 0, dsaDays = 0;
+    const researchTopics = [];
+
+    // Personal, Spiritual & Lifestyle
+    let poojaDone = 0, templeVisits = 0, sunExperiences = 0;
+    let familyCount = 0, photoCount = 0, reflectionCount = 0, leisureCount = 0;
+    const memories = [];
+    const familyMoments = [];
+    const leisureLogs = [];
+
+    allDays.forEach(d => {
+      if (d.habits.strength === 'done') strengthSessions++;
+      workoutMinsTotal += parseFloat(d.metrics.workoutMins) || 0;
+
+      const stp = parseFloat(d.metrics.steps);
+      if (!isNaN(stp) && stp > 0) {
+        stepsSum += stp;
+        stepsCount++;
+        if (stp >= state.settings.stepTarget) tenKDays++;
+      } else if (d.habits.steps === 'done') {
+        tenKDays++;
+      }
+
+      const wat = parseFloat(d.metrics.waterL);
+      if (!isNaN(wat) && wat > 0) { waterSum += wat; waterCount++; }
+
+      const pro = parseFloat(d.metrics.proteinG);
+      if (!isNaN(pro) && pro > 0) { proteinSum += pro; proteinCount++; }
+
+      if (!isHabitExemptOnDay({ id: 'healthyFood' }, d)) {
+        if (d.habits.healthyFood === 'done') { healthyEatDone++; healthyEatTracked++; }
+        else if (d.habits.healthyFood === 'missed') { healthyEatTracked++; }
+      }
+
+      const dsaH = parseFloat(d.metrics.dsaHours) || 0;
+      if (dsaH > 0 || d.habits.dsa === 'done') {
+        dsaDays++;
+        dsaHoursTotal += dsaH > 0 ? dsaH : 1;
+      }
+
+      if (d.research.topic && d.research.topic.trim()) {
+        researchTopics.push({
+          day: d.day,
+          topic: d.research.topic.trim(),
+          mins: d.research.mins,
+          learnings: [d.research.learn1, d.research.learn2, d.research.learn3].filter(Boolean)
+        });
+      }
+
+      if (d.habits.pooja === 'done') poojaDone++;
+      if (d.habits.temple === 'done') templeVisits++;
+      if (d.metrics.sawSunrise) sunExperiences++;
+      if (d.metrics.sawSunset) sunExperiences++;
+      if (!d.metrics.sawSunrise && !d.metrics.sawSunset && d.habits.sunMoment === 'done') sunExperiences++;
+
+      if (d.family.spentTime) {
+        familyCount++;
+        if (d.family.activity || d.family.memory) {
+          familyMoments.push({ day: d.day, activity: d.family.activity, memory: d.family.memory });
+        }
+      }
+
+      photoCount += (d.photos || []).length;
+      if (d.journal.bestMoment && d.journal.bestMoment.trim()) {
+        memories.push({ day: d.day, text: d.journal.bestMoment.trim() });
+      }
+      if (d.journal.notes && d.journal.notes.trim()) reflectionCount++;
+
+      if (d.fun.marvel || d.fun.other || d.fun.hobbies) {
+        leisureCount++;
+        leisureLogs.push({ day: d.day, marvel: d.fun.marvel, other: d.fun.other, hobbies: d.fun.hobbies });
+      }
+    });
+
+    // Weekly breakdown (W1..W5)
+    const weekBuckets = [
+      { label: 'Week 1 (D1–7)', start: 1, end: 7 },
+      { label: 'Week 2 (D8–14)', start: 8, end: 14 },
+      { label: 'Week 3 (D15–21)', start: 15, end: 21 },
+      { label: 'Week 4 (D22–28)', start: 22, end: 28 },
+      { label: 'Days 29–30', start: 29, end: 30 }
+    ];
+
+    const weeklyTrends = weekBuckets.map(wb => {
+      let mE = 0, mT = 0, fD = 0, fT = 0;
+      for (let d = wb.start; d <= wb.end; d++) {
+        const dayObj = state.days[d];
+        const s = computeDayScores(dayObj);
+        if (!s.hasAnyActivity) continue;
+        mE += s.mandEarned;
+        mT += s.mandTotal;
+        fD += s.flexDone;
+        fT += s.flexTracked;
+      }
+      return {
+        label: wb.label,
+        mandatoryPct: mT > 0 ? Math.round((mE / mT) * 100) : 0,
+        flexiblePct: fT > 0 ? Math.round((fD / fT) * 100) : 0
+      };
+    });
+
+    // Individual habit rates (excluding optional experiences)
+    const habitRates = ALL_CORE_HABITS.filter(h => h.habitType !== 'optional').map(h => {
+      let done = 0, denom = 0;
+      pool.forEach(d => {
+        if (isHabitExemptOnDay(h, d)) return;
+        const st = d.habits[h.id] || 'na';
+        if (isHabitMandatory(h)) {
+          denom += 1;
+          if (st === 'done') done += 1;
+        } else {
+          if (st === 'done') { done += 1; denom += 1; }
+          else if (st === 'missed') { denom += 1; }
+        }
+      });
+      return {
+        id: h.id,
+        name: h.name,
+        isMand: isHabitMandatory(h),
+        pct: denom > 0 ? Math.round((done / denom) * 100) : 0
+      };
+    });
+
+    return {
+      activeDaysCount: activeDays.length,
+      mandatoryConsistencyPct,
+      flexibleCompletionPct,
+      readDays,
+      readMinsTotal,
+      readPagesTotal,
+      readingConsistencyPct,
+      streaks,
+      strengthSessions,
+      workoutHours: (workoutMinsTotal / 60).toFixed(1),
+      avgSteps: stepsCount > 0 ? Math.round(stepsSum / stepsCount) : 0,
+      tenKDays,
+      avgWater: waterCount > 0 ? (waterSum / waterCount).toFixed(2) : '0.00',
+      avgProtein: proteinCount > 0 ? Math.round(proteinSum / proteinCount) : 0,
+      healthyEatPct: healthyEatTracked > 0 ? Math.round((healthyEatDone / healthyEatTracked) * 100) : 0,
+      dsaHoursTotal: dsaHoursTotal.toFixed(1),
+      dsaDays,
+      researchTopics,
+      poojaPct: pool.length > 0 ? Math.round((poojaDone / pool.length) * 100) : 0,
+      templeVisits,
+      sunExperiences,
+      familyCount,
+      photoCount,
+      reflectionCount,
+      leisureCount,
+      memories,
+      familyMoments,
+      leisureLogs,
+      weeklyTrends,
+      habitRates
+    };
+  }
+
+
+  // Render My Fitness Journey View
+  let fitnessPhotoCache = {};
+
+  async function renderFitnessJourneyView() {
+    document.getElementById('fitCurrentDayLabel').textContent = `Day ${state.selectedDay}`;
+    const list = state.fitnessPhotos || [];
+    document.getElementById('fitnessPhotoTotalBadge').textContent = `${list.length} Check-in${list.length === 1 ? '' : 's'}`;
+
+    const timeline = document.getElementById('fitnessTimelineGrid');
+    timeline.innerHTML = '';
+
+    if (list.length === 0) {
+      timeline.innerHTML = `<div class="card" style="grid-column:1/-1; text-align:center; color:var(--ink-muted);">
+        No progress photos logged yet. Upload your Day 1 baseline photo above to start tracking your visual fitness journey privately.
+      </div>`;
+      document.getElementById('fitnessCompareCard').style.display = 'none';
+      return;
+    }
+
+    const sorted = [...list].sort((a, b) => (a.day - b.day) || (a.createdAt - b.createdAt));
+
+    for (const item of sorted) {
+      let dataUrl = fitnessPhotoCache[item.id];
+      if (!dataUrl) {
+        const rec = await PhotoDB.getFitnessPhoto(item.id);
+        if (rec && rec.dataUrl) {
+          dataUrl = rec.dataUrl;
+          fitnessPhotoCache[item.id] = dataUrl;
+        }
+      }
+
+      const card = document.createElement('div');
+      card.className = 'fitness-milestone-card';
+      card.innerHTML = `
+        ${dataUrl ? `<img src="${dataUrl}" alt="${escapeHtml(item.milestone)}">` : ''}
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+          <span class="milestone-pill">${escapeHtml(item.milestone)}</span>
+          <span style="font-size:0.76rem; font-weight:700; color:var(--ink-muted);">Day ${item.day}</span>
+        </div>
+        ${item.weight ? `<div style="font-size:0.84rem; font-weight:700; color:var(--sage-dark); margin-bottom:4px;">Body Metric: ${escapeHtml(item.weight)}</div>` : ''}
+        ${item.note ? `<div style="font-size:0.82rem; color:var(--ink); background:var(--bg-cream); padding:7px 9px; border-radius:8px; margin-bottom:8px;">${escapeHtml(item.note)}</div>` : ''}
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <span style="font-size:0.72rem; color:var(--ink-muted);">${escapeHtml(item.dateStr || '')}</span>
+          <button type="button" class="btn btn-danger fit-del-btn" data-fid="${item.id}" style="padding:4px 9px; font-size:0.74rem;">Delete</button>
+        </div>
+      `;
+      timeline.appendChild(card);
+    }
+
+    document.querySelectorAll('.fit-del-btn').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const fid = btn.dataset.fid;
+        state.fitnessPhotos = (state.fitnessPhotos || []).filter(x => x.id !== fid);
+        delete fitnessPhotoCache[fid];
+        await PhotoDB.deleteFitnessPhoto(fid);
+        saveState('Fitness photo removed');
+        renderFitnessJourneyView();
+      });
+    });
+
+    const compareCard = document.getElementById('fitnessCompareCard');
+    if (sorted.length >= 2) {
+      compareCard.style.display = 'block';
+      const leftSel = document.getElementById('fitCompareLeftSel');
+      const rightSel = document.getElementById('fitCompareRightSel');
+      const prevL = leftSel.value;
+      const prevR = rightSel.value;
+
+      const optionsHtml = sorted.map(x => `<option value="${x.id}">Day ${x.day} — ${escapeHtml(x.milestone)} ${x.weight ? '(' + escapeHtml(x.weight) + ')' : ''}</option>`).join('');
+      leftSel.innerHTML = optionsHtml;
+      rightSel.innerHTML = optionsHtml;
+
+      leftSel.value = sorted.some(x => x.id === prevL) ? prevL : sorted[0].id;
+      rightSel.value = sorted.some(x => x.id === prevR) ? prevR : sorted[sorted.length - 1].id;
+
+      const renderSlot = (selId, targetDivId) => {
+        const chosen = sorted.find(x => x.id === document.getElementById(selId).value);
+        const div = document.getElementById(targetDivId);
+        if (!chosen) { div.innerHTML = ''; return; }
+        const url = fitnessPhotoCache[chosen.id] || '';
+        div.innerHTML = `
+          ${url ? `<img src="${url}" alt="${escapeHtml(chosen.milestone)}">` : ''}
+          <div style="font-size:0.78rem; font-weight:700; color:var(--sage-dark); margin-top:6px;">Day ${chosen.day} • ${escapeHtml(chosen.milestone)}</div>
+          ${chosen.weight ? `<div style="font-size:0.76rem; color:var(--ink-muted);">Metric: ${escapeHtml(chosen.weight)}</div>` : ''}
+        `;
+      };
+
+      renderSlot('fitCompareLeftSel', 'fitCompareLeftDisplay');
+      renderSlot('fitCompareRightSel', 'fitCompareRightDisplay');
+
+      leftSel.onchange = () => renderSlot('fitCompareLeftSel', 'fitCompareLeftDisplay');
+      rightSel.onchange = () => renderSlot('fitCompareRightSel', 'fitCompareRightDisplay');
+    } else {
+      compareCard.style.display = 'none';
+    }
+  }
+
+  function initFitnessJourneyEvents() {
+    const dropZone = document.getElementById('fitnessPhotoDropZone');
+    const fileInput = document.getElementById('fitnessPhotoInput');
+    if (!dropZone || !fileInput) return;
+
+    dropZone.addEventListener('click', () => fileInput.click());
+    fileInput.addEventListener('change', async (e) => {
+      const file = e.target.files && e.target.files[0];
+      if (!file) return;
+      const d = state.selectedDay;
+      const milestone = document.getElementById('fitMilestoneSelect').value || `Day ${d} Check-in`;
+      const weight = document.getElementById('fitWeightInput').value.trim();
+      const note = document.getElementById('fitNoteInput').value.trim();
+
+      const dataUrl = await compressImageAsync(file, 960, 0.82);
+      const fid = `fit_d${d}_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`;
+      await PhotoDB.saveFitnessPhoto({ id: fid, day: d, dataUrl });
+      fitnessPhotoCache[fid] = dataUrl;
+
+      if (!Array.isArray(state.fitnessPhotos)) state.fitnessPhotos = [];
+      state.fitnessPhotos.push({
+        id: fid,
+        day: d,
+        milestone,
+        weight,
+        note,
+        dateStr: getFormattedDayDate(d),
+        createdAt: Date.now()
+      });
+
+      fileInput.value = '';
+      document.getElementById('fitNoteInput').value = '';
+      saveState('Fitness progress photo saved');
+      renderFitnessJourneyView();
+    });
+  }
+
+  // Render Analytics Dashboard
+  function renderDashboardView() {
+    const a = computeAnalytics();
+
+    document.getElementById('kpiMandatoryPct').textContent = `${a.mandatoryConsistencyPct}%`;
+    document.getElementById('kpiReadStreak').textContent = `${a.streaks.current} days`;
+    document.getElementById('kpiReadLongest').textContent = `Longest: ${a.streaks.longest}d`;
+    document.getElementById('kpiReadTotal').textContent = `${a.readMinsTotal} min`;
+    document.getElementById('kpiReadDays').textContent = `${a.readDays} / 30 days • ${a.readPagesTotal} pg`;
+    document.getElementById('kpiFlexiblePct').textContent = `${a.flexibleCompletionPct}%`;
+
+    document.getElementById('kpiStrengthCount').textContent = a.strengthSessions;
+    document.getElementById('kpiWorkoutHours').textContent = `${a.workoutHours} total hours`;
+    document.getElementById('kpiAvgSteps').textContent = a.avgSteps.toLocaleString();
+    document.getElementById('kpiTenKDays').textContent = `${a.tenKDays} days ≥ ${Number(state.settings.stepTarget).toLocaleString()}`;
+    document.getElementById('kpiDsaHours').textContent = `${a.dsaHoursTotal}h`;
+    document.getElementById('kpiDsaDays').textContent = `${a.dsaDays} practice days`;
+    document.getElementById('kpiPoojaPct').textContent = `${a.poojaPct}%`;
+    document.getElementById('kpiTempleCount').textContent = `${a.templeVisits} temple visits`;
+
+    document.getElementById('kpiWaterProtein').textContent = `${a.avgWater}L / ${a.avgProtein}g`;
+    document.getElementById('kpiHealthyEat').textContent = `Healthy eating: ${a.healthyEatPct}%`;
+    document.getElementById('kpiSunExperiences').textContent = a.sunExperiences;
+    document.getElementById('kpiFamilyCount').textContent = `${a.familyCount} days`;
+    document.getElementById('kpiPhotoMemories').textContent = `${a.photoCount} photos • ${a.reflectionCount} reflections`;
+    document.getElementById('kpiResearchCount').textContent = `${a.researchTopics.length} topics`;
+    document.getElementById('kpiHobbyCount').textContent = `${a.leisureCount} leisure logs`;
+
+    // Current week's optional weekly goals
+    const curWeek = Math.min(3, Math.floor((state.selectedDay - 1) / 7));
+    const wStart = curWeek * 7 + 1;
+    const wEnd = Math.min(30, wStart + 6);
+    let wkFam = 0, wkRes = 0, wkOut = 0;
+    for (let d = wStart; d <= wEnd; d++) {
+      if (state.days[d].family.spentTime) wkFam++;
+      if (state.days[d].research.topic && state.days[d].research.topic.trim()) wkRes++;
+      if (state.days[d].habits.temple === 'done') wkOut++;
+    }
+
+    const wkGoals = [
+      { label: `Week ${curWeek + 1} Family Moments`, cur: wkFam, target: state.settings.wkFamilyGoal || 3 },
+      { label: `Week ${curWeek + 1} Research Sessions`, cur: wkRes, target: state.settings.wkResearchGoal || 2 },
+      { label: `Week ${curWeek + 1} Temple / Special Outings`, cur: wkOut, target: state.settings.wkOutingGoal || 1 }
+    ];
+
+    document.getElementById('weeklyGoalsProgress').innerHTML = wkGoals.map(g => {
+      const pct = Math.min(100, Math.round((g.cur / Math.max(1, g.target)) * 100));
+      return `<div class="bar-row">
+        <div class="bar-meta"><span>${g.label}</span><span>${g.cur} / ${g.target}</span></div>
+        <div class="bar-track"><div class="bar-fill" style="width:${pct}%"></div></div>
+      </div>`;
+    }).join('');
+
+    // Individual habit bars
+    document.getElementById('habitConsistencyBars').innerHTML = a.habitRates.map(hr => `
+      <div class="bar-row">
+        <div class="bar-meta">
+          <span>${hr.name} ${hr.isMand ? '<span class="tag-pill tag-mandatory">Mandatory</span>' : ''}</span>
+          <span>${hr.pct}%</span>
+        </div>
+        <div class="bar-track"><div class="bar-fill ${hr.isMand ? 'terracotta' : ''}" style="width:${hr.pct}%"></div></div>
+      </div>
+    `).join('');
+
+    renderCharts(a);
+  }
+
+  function renderCharts(a) {
+    Object.values(charts).forEach(ch => ch && ch.destroy());
+    const labels30 = Array.from({ length: 30 }, (_, i) => `D${i + 1}`);
+
+    charts.weekly = new Chart(document.getElementById('weeklyChart'), {
+      type: 'bar',
+      data: {
+        labels: a.weeklyTrends.map(w => w.label),
+        datasets: [
+          { label: 'Mandatory %', data: a.weeklyTrends.map(w => w.mandatoryPct), backgroundColor: '#C87D55', borderRadius: 6 },
+          { label: 'Flexible %', data: a.weeklyTrends.map(w => w.flexiblePct), backgroundColor: '#527366', borderRadius: 6 }
+        ]
+      },
+      options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true, max: 100 } } }
+    });
+
+    charts.learning = new Chart(document.getElementById('learningChart'), {
+      type: 'line',
+      data: {
+        labels: labels30,
+        datasets: [
+          { label: 'Reading (mins)', data: labels30.map((_, i) => parseFloat(state.days[i + 1].metrics.readingMins) || 0), borderColor: '#C87D55', yAxisID: 'y', tension: 0.3 },
+          { label: 'DSA (hours)', data: labels30.map((_, i) => parseFloat(state.days[i + 1].metrics.dsaHours) || 0), borderColor: '#3B5249', yAxisID: 'y1', tension: 0.3 }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+          y: { type: 'linear', position: 'left', beginAtZero: true, title: { display: true, text: 'Reading (mins)' } },
+          y1: { type: 'linear', position: 'right', beginAtZero: true, grid: { drawOnChartArea: false }, title: { display: true, text: 'DSA (hrs)' } }
+        }
+      }
+    });
+
+    charts.fitness = new Chart(document.getElementById('fitnessChart'), {
+      type: 'line',
+      data: {
+        labels: labels30,
+        datasets: [
+          { label: 'Steps', data: labels30.map((_, i) => parseFloat(state.days[i + 1].metrics.steps) || 0), borderColor: '#527366', yAxisID: 'y', tension: 0.3 },
+          { label: 'Protein (g)', data: labels30.map((_, i) => parseFloat(state.days[i + 1].metrics.proteinG) || 0), borderColor: '#D99B26', yAxisID: 'y1', tension: 0.3 }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+          y: { type: 'linear', position: 'left', beginAtZero: true },
+          y1: { type: 'linear', position: 'right', beginAtZero: true, grid: { drawOnChartArea: false } }
+        }
+      }
+    });
+
+    charts.mood = new Chart(document.getElementById('moodChart'), {
+      type: 'line',
+      data: {
+        labels: labels30,
+        datasets: [
+          { label: 'Mood', data: labels30.map((_, i) => state.days[i + 1].journal.mood || null), borderColor: '#527366', spanGaps: true, tension: 0.3 },
+          { label: 'Energy', data: labels30.map((_, i) => state.days[i + 1].journal.energy || null), borderColor: '#D99B26', spanGaps: true, tension: 0.3 },
+          { label: 'Stress', data: labels30.map((_, i) => state.days[i + 1].journal.stress || null), borderColor: '#C87D55', spanGaps: true, tension: 0.3 }
+        ]
+      },
+      options: { responsive: true, maintainAspectRatio: false, scales: { y: { min: 1, max: 5 } } }
+    });
+  }
+
+  // Render Day 30 Final Reflective Report
+  function renderReportView() {
+    const a = computeAnalytics();
+    const sorted = [...a.habitRates].sort((x, y) => y.pct - x.pct);
+    const achievements = sorted.slice(0, 4);
+    const struggled = [...sorted].reverse().slice(0, 4);
+
+    let mFirst = [], mSecond = [], eFirst = [], eSecond = [];
+    for (let d = 1; d <= 30; d++) {
+      const j = state.days[d].journal;
+      if (d <= 15) {
+        if (j.mood) mFirst.push(j.mood);
+        if (j.energy) eFirst.push(j.energy);
+      } else {
+        if (j.mood) mSecond.push(j.mood);
+        if (j.energy) eSecond.push(j.energy);
+      }
+    }
+    const avg = arr => arr.length ? (arr.reduce((s, v) => s + v, 0) / arr.length).toFixed(1) : '—';
+
+    const next30Goals = [];
+    if (a.readingConsistencyPct < 90) next30Goals.push('Protect a fixed 15–20 minute daily reading slot right before bed or morning tea.');
+    else next30Goals.push('Keep your non-negotiable daily reading anchor alive and explore a new genre.');
+    if (parseFloat(a.avgProtein) < state.settings.proteinTarget) next30Goals.push(`Build one effortless high-protein meal anchor to reach ${state.settings.proteinTarget}g/day more consistently.`);
+    if (struggled[0]) next30Goals.push(`Give gentle attention to "${struggled[0].name}" (${struggled[0].pct}%) by pairing it with an already strong routine.`);
+    next30Goals.push('Continue capturing one photograph a day and printing your favorite moments for your physical scrapbook.');
+
+    document.getElementById('reportBody').innerHTML = `
+      <div class="report-section">
+        <div class="report-heading">1. Monthly Lifestyle Summary</div>
+        <table class="comp-table">
+          <tr><th>Dimension</th><th>30-Day Summary</th></tr>
+          <tr><td><strong>Mandatory Daily Consistency</strong></td><td><strong>${a.mandatoryConsistencyPct}%</strong> across ${a.activeDaysCount} active days</td></tr>
+          <tr><td><strong>Daily Reading (Non-Negotiable)</strong></td><td><strong>${a.readingConsistencyPct}%</strong> (${a.readDays} days • ${a.readMinsTotal} mins • ${a.readPagesTotal} pages • Longest streak: ${a.streaks.longest}d)</td></tr>
+          <tr><td><strong>Fitness Progress</strong></td><td>${a.strengthSessions} strength workouts (${a.workoutHours} hrs) • Avg ${a.avgSteps.toLocaleString()} steps/day (${a.tenKDays} days ≥ 10k)</td></tr>
+          <tr><td><strong>Water &amp; Protein Trends</strong></td><td>Avg <strong>${a.avgWater} L</strong> water/day • Avg <strong>${a.avgProtein} g</strong> protein/day</td></tr>
+          <tr><td><strong>DSA &amp; Technical Growth</strong></td><td><strong>${a.dsaHoursTotal} hours</strong> across ${a.dsaDays} practice days</td></tr>
+          <tr><td><strong>Spiritual Practice</strong></td><td>Daily Pooja: <strong>${a.poojaPct}%</strong> • Temple Visits: ${a.templeVisits} • Sunrise/Sunset: ${a.sunExperiences}</td></tr>
+          <tr><td><strong>Memories &amp; Relationships</strong></td><td>${a.photoCount} scrapbook photographs • ${a.familyCount} meaningful family days</td></tr>
+          <tr><td><strong>Mood &amp; Energy Trajectory</strong></td><td>Mood: ${avg(mFirst)} → <strong>${avg(mSecond)}</strong> / 5 • Energy: ${avg(eFirst)} → <strong>${avg(eSecond)}</strong> / 5</td></tr>
+        </table>
+      </div>
+
+      <div class="report-section">
+        <div class="report-heading">2. Best Memories &amp; Family Moments</div>
+        ${a.memories.slice(0, 6).map(m => `<div class="quote-card"><strong>Day ${m.day}:</strong> ${escapeHtml(m.text)}</div>`).join('') || '<div style="font-size:0.84rem; color:var(--ink-muted);">Record memorable moments in your daily check-in to see them highlighted here.</div>'}
+        ${a.familyMoments.slice(0, 4).map(fm => `<div class="quote-card" style="border-left-color:var(--terracotta);"><strong>Family (Day ${fm.day}):</strong> ${escapeHtml(fm.activity)} ${fm.memory ? '— ' + escapeHtml(fm.memory) : ''}</div>`).join('')}
+      </div>
+
+      <div class="report-section">
+        <div class="report-heading">3. Research Topics Explored</div>
+        ${a.researchTopics.length > 0
+          ? a.researchTopics.map(r => `<div style="font-size:0.85rem; margin-bottom:6px;">• <strong>Day ${r.day} — ${escapeHtml(r.topic)}</strong> ${r.mins ? `(${r.mins} mins)` : ''}${r.learnings.length ? ': ' + escapeHtml(r.learnings.join(' | ')) : ''}</div>`).join('')
+          : '<div style="font-size:0.84rem; color:var(--ink-muted);">No independent research sessions logged yet.</div>'}
+      </div>
+
+      <div class="report-section">
+        <div class="report-heading">4. Biggest Achievements vs. Areas Where You Struggled</div>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+          <div>
+            <div style="font-size:0.8rem; font-weight:700; color:var(--sage-main); margin-bottom:4px;">Biggest Achievements</div>
+            ${achievements.map(h => `<div style="font-size:0.84rem; padding:3px 0;">• ${h.name}: <strong>${h.pct}%</strong></div>`).join('')}
+          </div>
+          <div>
+            <div style="font-size:0.8rem; font-weight:700; color:var(--terracotta); margin-bottom:4px;">Areas Requiring Gentle Focus</div>
+            ${struggled.map(h => `<div style="font-size:0.84rem; padding:3px 0;">• ${h.name}: <strong>${h.pct}%</strong></div>`).join('')}
+          </div>
+        </div>
+      </div>
+
+      <div class="report-section">
+        <div class="report-heading">5. Intentions for the Next 30 Days</div>
+        <ul style="margin:6px 0; padding-left:18px; font-size:0.85rem;">
+          ${next30Goals.map(g => `<li style="margin-bottom:5px;">${g}</li>`).join('')}
+        </ul>
+      </div>
+    `;
+  }
+
+  // Excel Export (Multi-sheet)
+  function exportToExcel() {
+    if (typeof XLSX === 'undefined') {
+      showToast('Excel library still loading');
+      return;
+    }
+    const wb = XLSX.utils.book_new();
+    const dailyRows = [];
+    for (let i = 1; i <= 30; i++) {
+      const d = state.days[i];
+      const sc = computeDayScores(d);
+      dailyRows.push({
+        Day: i,
+        Date: getFormattedDayDate(i),
+        Day_Mode: d.dayType,
+        Mandatory_Consistency_Pct: sc.mandatoryPct,
+        Flexible_Completion_Pct: sc.flexiblePct,
+        Reading_Status: d.habits.reading,
+        Reading_Mins: d.metrics.readingMins,
+        Reading_Pages: d.metrics.readingPages,
+        Book_Title: d.metrics.readingBook,
+        Strength_Mins: d.metrics.workoutMins,
+        Steps: d.metrics.steps,
+        Water_L: d.metrics.waterL,
+        Protein_g: d.metrics.proteinG,
+        Healthy_Eating: d.habits.healthyFood,
+        Fruits_Veg: d.habits.fruitsVeg,
+        Mobility: d.habits.mobility,
+        DSA_Hours: d.metrics.dsaHours,
+        DSA_Topic: d.metrics.dsaTopic,
+        Pooja: d.habits.pooja,
+        Temple_Visit: d.metrics.templeNote,
+        Sunrise: d.metrics.sawSunrise ? 'Yes' : 'No',
+        Sunset: d.metrics.sawSunset ? 'Yes' : 'No',
+        Gratitude: d.metrics.gratitudeText,
+        Family_Time: d.family.spentTime ? 'Yes' : 'No',
+        Family_Note: `${d.family.activity} ${d.family.memory}`.trim(),
+        Research_Topic: d.research.topic,
+        Research_Learnings: [d.research.learn1, d.research.learn2, d.research.learn3].filter(Boolean).join('; '),
+        Photos_Count: (d.photos || []).length,
+        Memorable_Moment: d.journal.bestMoment,
+        Journal_Notes: d.journal.notes,
+        Mood: d.journal.mood || '',
+        Energy: d.journal.energy || '',
+        Stress: d.journal.stress || ''
+      });
+    }
+    XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(dailyRows), '30_Day_Journal');
+    XLSX.writeFile(wb, '30_Day_Lifestyle_Journal_Report.xlsx');
+    showToast('Excel workbook exported');
+  }
+
+  // JSON Export & Validated Import/Restore
+  async function exportJsonBackup() {
+    const allPhotos = await PhotoDB.getAllPhotos();
+    const allFitnessPhotos = await PhotoDB.getAllFitnessPhotos();
+    const payload = {
+      exportedAt: new Date().toISOString(),
+      version: 3,
+      state,
+      photos: allPhotos,
+      fitnessPhotos: allFitnessPhotos
+    };
+    const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `Lifestyle_Journal_Backup_${new Date().toISOString().split('T')[0]}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+    showToast('Full backup downloaded');
+  }
+
+  function handleJsonImport(file) {
+    const reader = new FileReader();
+    reader.onload = async (ev) => {
+      try {
+        const parsed = JSON.parse(ev.target.result);
+        const importedState = parsed.state || parsed;
+        if (!importedState || typeof importedState !== 'object' || !importedState.days || !importedState.days[1]) {
+          alert('Invalid backup file: missing 30-day journal structure.');
+          return;
+        }
+        if (!confirm('Restore from this backup? This will replace your current browser entries with the validated backup file.')) {
+          return;
+        }
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(importedState));
+        state = loadAndMigrateState();
+
+        if (Array.isArray(parsed.photos)) {
+          await PhotoDB.clearAll();
+          photoCache = {};
+          for (const rec of parsed.photos) {
+            if (rec && rec.id && rec.dataUrl) {
+              await PhotoDB.savePhoto(rec);
+              photoCache[rec.id] = rec.dataUrl;
+            }
+          }
+        }
+        if (Array.isArray(parsed.fitnessPhotos)) {
+          fitnessPhotoCache = {};
+          for (const frec of parsed.fitnessPhotos) {
+            if (frec && frec.id && frec.dataUrl) {
+              await PhotoDB.saveFitnessPhoto(frec);
+              fitnessPhotoCache[frec.id] = frec.dataUrl;
+            }
+          }
+        }
+        await flushLegacyPhotosToIDB();
+        saveState('Backup restored successfully');
+        renderAll();
+      } catch (err) {
+        alert('Could not read JSON backup file. Please verify the file is valid JSON.');
+      }
+    };
+    reader.readAsText(file);
+  }
+
+  // Realistic 30-Day Sample Dataset
+  function loadDemoData() {
+    if (!confirm('Load 30 days of realistic sample entries? This will overwrite current entries.')) return;
+    const books = ['Atomic Habits', 'Designing Data-Intensive Applications', 'The Psychology of Money', 'Meditations'];
+    const topics = ['Sliding Window & Two Pointers', 'Binary Trees & DFS', 'Dynamic Programming', 'Graphs & Shortest Path'];
+    const moments = [
+      'Quiet morning tea and 20 pages of reading before screens',
+      'Solved a challenging graph problem after sketching it out',
+      'Evening walk and golden sunset with family',
+      'Strong home workout session with extra energy',
+      'Peaceful morning pooja and gratitude journaling'
+    ];
+
+    for (let i = 1; i <= 30; i++) {
+      const d = createEmptyDay(i);
+      const isRest = i % 7 === 0;
+      const isIllness = i === 18;
+      d.dayType = isIllness ? 'illness' : (isRest ? 'rest' : 'regular');
+      if (isIllness) d.illnessNote = 'Mild fatigue — prioritized rest and hydration';
+
+      // Mandatory reading done 29/30 days (1 explicit illness exception)
+      if (isIllness) {
+        d.habits.reading = 'na';
+        d.metrics.readingIllnessException = true;
+      } else {
+        d.habits.reading = 'done';
+        d.metrics.readingMins = String(15 + (i % 4) * 5);
+        d.metrics.readingPages = String(10 + (i % 6));
+        d.metrics.readingBook = books[i % books.length];
+      }
+
+      d.habits.pooja = i % 9 === 0 ? 'missed' : 'done';
+      d.habits.gratitude = 'done';
+      d.metrics.gratitudeText = 'Grateful for steady discipline, family warmth, and calm mornings.';
+
+      if (!isRest && !isIllness) {
+        d.habits.strength = i % 2 === 1 ? 'done' : 'na';
+        if (d.habits.strength === 'done') d.metrics.workoutMins = '50';
+        d.habits.steps = i % 4 === 0 ? 'missed' : 'done';
+        d.metrics.steps = String(8400 + (i % 5) * 650);
+        d.habits.dsa = 'done';
+        d.metrics.dsaHours = '1.25';
+        d.metrics.dsaTopic = topics[i % topics.length];
+      }
+
+      d.habits.water = 'done';
+      d.metrics.waterL = (2.1 + (i % 4) * 0.1).toFixed(1);
+      d.habits.protein = i % 5 === 0 ? 'missed' : 'done';
+      d.metrics.proteinG = String(78 + (i % 4) * 5);
+      d.habits.healthyFood = 'done';
+      d.habits.fruitsVeg = i % 3 === 0 ? 'na' : 'done';
+      d.habits.mobility = 'done';
+      d.habits.personalTime = 'done';
+
+      if (i % 3 === 0) {
+        d.habits.sunMoment = 'done';
+        d.metrics.sawSunset = true;
+      }
+      if (i % 7 === 1) {
+        d.habits.temple = 'done';
+        d.metrics.templeNote = 'Peaceful morning temple visit';
+      }
+      if (i % 2 === 0) {
+        d.family.spentTime = true;
+        d.family.activity = 'Evening dinner and conversation';
+        d.family.memory = 'Shared laughs over old family stories';
+      }
+      if (i % 5 === 0) {
+        d.research.topic = 'Sleep architecture & circadian rhythm';
+        d.research.mins = '35';
+        d.research.learn1 = 'Morning sunlight anchors cortisol and melatonin timing';
+        d.research.learn2 = 'Consistent wake times matter more than bedtime';
+      }
+      if (i % 4 === 0) {
+        d.fun.marvel = 'Rewatched Loki finale & discussed multiverse timeline theories';
+        d.fun.hobbies = 'Evening photography walk';
+      }
+
+      d.journal.bestMoment = moments[i % moments.length];
+      d.journal.notes = 'Focused on showing up calmly rather than chasing perfection.';
+      d.journal.mood = i <= 15 ? 4 : 5;
+      d.journal.energy = i <= 15 ? 3 : 4;
+      d.journal.stress = i <= 15 ? 3 : 2;
+
+      state.days[i] = d;
+    }
+    state.selectedDay = 30;
+    saveState('30-day sample dataset loaded');
+    renderAll();
+  }
+
+  // Settings & Navigation
+  function renderSettingsView() {
+    const s = state.settings;
+    document.getElementById('setStartDate').value = s.startDate || '';
+    document.getElementById('setReadingTarget').value = s.readingTarget || 15;
+    document.getElementById('setDsaTarget').value = s.dsaTarget || 1.0;
+    document.getElementById('setWaterTarget').value = s.waterTarget || 2.2;
+    document.getElementById('setProteinTarget').value = s.proteinTarget || 85;
+    document.getElementById('setStepTarget').value = s.stepTarget || 10000;
+    document.getElementById('setWorkoutPref').value = s.workoutPref || '';
+    document.getElementById('mandPooja').checked = Boolean(s.mandPooja);
+    document.getElementById('mandPhoto').checked = Boolean(s.mandPhoto);
+    document.getElementById('mandReflection').checked = Boolean(s.mandReflection);
+    document.getElementById('wkFamilyGoal').value = s.wkFamilyGoal || 3;
+    document.getElementById('wkResearchGoal').value = s.wkResearchGoal || 2;
+    document.getElementById('wkOutingGoal').value = s.wkOutingGoal || 1;
+    document.getElementById('showResearchSec').checked = Boolean(s.showResearchSec);
+    document.getElementById('showFunSec').checked = Boolean(s.showFunSec);
+  }
+
+  function switchView(viewName) {
+    document.querySelectorAll('.view-panel').forEach(p => p.classList.remove('active'));
+    document.getElementById(`view-${viewName}`).classList.add('active');
+    document.querySelectorAll('.nav-tab').forEach(t => t.classList.toggle('active', t.dataset.view === viewName));
+
+    if (viewName === 'today') renderTodayView();
+    if (viewName === 'calendar') renderCalendarView();
+    if (viewName === 'scrapbook') renderScrapbookView();
+    if (viewName === 'fitness') renderFitnessJourneyView();
+    if (viewName === 'dashboard') renderDashboardView();
+    if (viewName === 'report') renderReportView();
+    if (viewName === 'settings') renderSettingsView();
+  }
+
+  function initGlobalEvents() {
+    document.querySelectorAll('.nav-tab').forEach(tab => {
+      tab.addEventListener('click', () => switchView(tab.dataset.view));
+    });
+
+    document.getElementById('saveSettingsBtn').addEventListener('click', () => {
+      const s = state.settings;
+      s.startDate = document.getElementById('setStartDate').value;
+      s.readingTarget = Math.max(5, parseInt(document.getElementById('setReadingTarget').value, 10) || 15);
+      s.dsaTarget = parseFloat(document.getElementById('setDsaTarget').value) || 1.0;
+      s.waterTarget = parseFloat(document.getElementById('setWaterTarget').value) || 2.2;
+      s.proteinTarget = parseInt(document.getElementById('setProteinTarget').value, 10) || 85;
+      s.stepTarget = parseInt(document.getElementById('setStepTarget').value, 10) || 10000;
+      s.workoutPref = document.getElementById('setWorkoutPref').value;
+      s.mandPooja = document.getElementById('mandPooja').checked;
+      s.mandPhoto = document.getElementById('mandPhoto').checked;
+      s.mandReflection = document.getElementById('mandReflection').checked;
+      s.wkFamilyGoal = parseInt(document.getElementById('wkFamilyGoal').value, 10) || 3;
+      s.wkResearchGoal = parseInt(document.getElementById('wkResearchGoal').value, 10) || 2;
+      s.wkOutingGoal = parseInt(document.getElementById('wkOutingGoal').value, 10) || 1;
+      s.showResearchSec = document.getElementById('showResearchSec').checked;
+      s.showFunSec = document.getElementById('showFunSec').checked;
+      saveState('Preferences saved');
+      renderAll();
+    });
+
+    document.getElementById('scrapbookSelectedOnly').addEventListener('change', renderScrapbookView);
+    document.getElementById('exportScrapbookHtmlBtn').addEventListener('click', exportPrintableScrapbookHtml);
+    document.getElementById('printScrapbookBtn').addEventListener('click', () => {
+      document.body.classList.add('print-scrapbook-mode');
+      window.print();
+      setTimeout(() => document.body.classList.remove('print-scrapbook-mode'), 500);
+    });
+    document.getElementById('printReportBtn').addEventListener('click', () => {
+      document.body.classList.remove('print-scrapbook-mode');
+      window.print();
+    });
+
+    document.getElementById('exportExcelBtn').addEventListener('click', exportToExcel);
+    document.getElementById('exportJsonBtn').addEventListener('click', exportJsonBackup);
+    document.getElementById('importJsonBtn').addEventListener('click', () => document.getElementById('importJsonInput').click());
+    document.getElementById('importJsonInput').addEventListener('change', (e) => {
+      if (e.target.files[0]) handleJsonImport(e.target.files[0]);
+      e.target.value = '';
+    });
+    document.getElementById('loadDemoBtn').addEventListener('click', loadDemoData);
+
+    document.getElementById('resetAllBtn').addEventListener('click', async () => {
+      if (confirm('Are you sure you want to permanently clear all 30 days of entries and scrapbook photos?')) {
+        state = getDefaultState();
+        photoCache = {};
+        await PhotoDB.clearAll();
+        saveState('All data reset');
+        renderAll();
+      }
+    });
+  }
+
+  function renderAll() {
+    renderTodayView();
+    renderCalendarView();
+    renderScrapbookView();
+    renderFitnessJourneyView();
+    renderDashboardView();
+    renderReportView();
+    renderSettingsView();
+  }
+
+  // Bootstrap
+  (async function boot() {
+    await PhotoDB.init();
+    await flushLegacyPhotosToIDB();
+    initDaySelector();
+    initDrawerEvents();
+    initFitnessJourneyEvents();
+    initGlobalEvents();
+    renderAll();
+  
+  // Offline/Online Indicator & Service Worker Registration
+  function updateNetworkBadge() {
+    const offBadge = document.getElementById('offlineStatusBadge');
+    if (offBadge) offBadge.style.display = navigator.onLine ? 'none' : 'inline-flex';
+  }
+  window.addEventListener('online', updateNetworkBadge);
+  window.addEventListener('offline', updateNetworkBadge);
+  updateNetworkBadge();
+
+  let deferredInstallPrompt = null;
+  window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredInstallPrompt = e;
+    const btn = document.getElementById('installPwaBtn');
+    if (btn) {
+      btn.style.display = 'inline-block';
+      btn.onclick = async () => {
+        if (!deferredInstallPrompt) return;
+        deferredInstallPrompt.prompt();
+        await deferredInstallPrompt.userChoice;
+        deferredInstallPrompt = null;
+        btn.style.display = 'none';
+      };
+    }
+  });
+
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('./service-worker.js').catch(() => {});
+    });
+  }
+})();
+
+  // Offline/Online Indicator & Service Worker Registration
+  function updateNetworkBadge() {
+    const offBadge = document.getElementById('offlineStatusBadge');
+    if (offBadge) offBadge.style.display = navigator.onLine ? 'none' : 'inline-flex';
+  }
+  window.addEventListener('online', updateNetworkBadge);
+  window.addEventListener('offline', updateNetworkBadge);
+  updateNetworkBadge();
+
+  let deferredInstallPrompt = null;
+  window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredInstallPrompt = e;
+    const btn = document.getElementById('installPwaBtn');
+    if (btn) {
+      btn.style.display = 'inline-block';
+      btn.onclick = async () => {
+        if (!deferredInstallPrompt) return;
+        deferredInstallPrompt.prompt();
+        await deferredInstallPrompt.userChoice;
+        deferredInstallPrompt = null;
+        btn.style.display = 'none';
+      };
+    }
+  });
+
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('./service-worker.js').catch(() => {});
+    });
+  }
+})();
+</script>
+</body>
+</html>

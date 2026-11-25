@@ -22,3 +22,4 @@ An offline-first Progressive Web App (PWA) for tracking daily habits, mandatory 
 
 ## Data Privacy & Backups
 All habit logs, journal entries, scrapbook photos, and **My Fitness Journey** progress check-ins are stored locally inside your browser's `localStorage` and `IndexedDB`. Use **Settings → Export JSON Backup** anytime to save a complete portable backup (including all photos).
+Trigger GitHub Pages rebuild
